@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import {  verify } from 'hono/jwt'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
+import { createPostInput, updatePostInput } from "@lagnajit09/medium-zod"
 
 // Create the main Hono app
 export const blogRouter = new Hono<{
@@ -32,28 +33,34 @@ blogRouter.use('/*', async (c, next) => {
 
 blogRouter.post("/", async (c) => {
     try {
-    const userId = c.get('userId');
+        const userId = c.get('userId');
 
-    const prisma = new PrismaClient({
-        datasourceUrl: c.env.DATABASE_URL
-    }).$extends(withAccelerate());
+        const prisma = new PrismaClient({
+            datasourceUrl: c.env.DATABASE_URL
+        }).$extends(withAccelerate());
 
-    const body = await c.req.json()
+        const body = await c.req.json();
 
-    if(!body.title || !body.content) {
-        c.status(410);
-        return c.json({error: "Please provide a title and a content."})
-    }
-
-    const blog = await prisma.post.create({
-        data: {
-            title: body.title,
-            content: body.content,
-            authorId: userId
+        const { success } = createPostInput.safeParse(body);
+        if (!success) {
+            c.status(400);
+            return c.json({ error: "invalid input" });
         }
-    })
 
-    return c.json({blog})
+        if(!body.title || !body.content) {
+            c.status(410);
+            return c.json({error: "Please provide a title and a content."})
+        }
+
+        const blog = await prisma.post.create({
+            data: {
+                title: body.title,
+                content: body.content,
+                authorId: userId
+            }
+        })
+
+        return c.json({blog})
     } catch(error) {
         c.status(500);
         return c.json({error : 'Internal server error'})
@@ -64,35 +71,41 @@ blogRouter.post("/", async (c) => {
 blogRouter.put('/', async (c) => {
     try {
 
-    const userId = c.get('userId');
-	const prisma = new PrismaClient({
-		datasourceUrl: c.env?.DATABASE_URL	,
-	}).$extends(withAccelerate());
+        const userId = c.get('userId');
+	    const prisma = new PrismaClient({
+		    datasourceUrl: c.env?.DATABASE_URL	,
+	    }).$extends(withAccelerate());
 
-	const body = await c.req.json();
+	    const body = await c.req.json();
 
-    if(!body.title && !body.content) {
-        c.status(410);
-        return c.json({error: "Please provide title or content."})
-    }
+        const { success } = updatePostInput.safeParse(body);
+        if (!success) {
+            c.status(400);
+            return c.json({ error: "invalid input" });
+        }
 
-    if(body.userId !== userId) {
-        c.status(400);
-        return c.json({error: "unauthorized access!"})
-    }
+        if(!body.title && !body.content) {
+            c.status(410);
+            return c.json({error: "Please provide title or content."})
+        }
 
-	await prisma.post.update({
-		where: {
-			id: body.id,
-			authorId: userId
-		},
-		data: {
-			title: body.title,
-			content: body.content
-		}
-	});
+        if(body.userId !== userId) {
+            c.status(400);
+            return c.json({error: "unauthorized access!"})
+        }
 
-	return c.text('updated post');
+	    await prisma.post.update({
+		    where: {
+			    id: body.id,
+			    authorId: userId
+		    },
+		    data: {
+			    title: body.title,
+			    content: body.content
+		    }
+	    });
+
+	    return c.text('updated post');
 
     } catch(error) {
         c.status(500);
