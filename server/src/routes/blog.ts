@@ -26,7 +26,7 @@ blogRouter.use('/*', async (c, next) => {
 		c.status(401);
 		return c.json({ error: "unauthorized" });
 	}
-	c.set('userId', payload.id);
+	c.set('userId', payload.id as string);
 	await next()
 })
 
@@ -71,17 +71,17 @@ blogRouter.put('/', async (c) => {
 
 	const body = await c.req.json();
 
-    if(!body.title || !body.content) {
+    if(!body.title && !body.content) {
         c.status(410);
         return c.json({error: "Please provide title or content."})
     }
 
-    if(body.id !== userId) {
+    if(body.userId !== userId) {
         c.status(400);
         return c.json({error: "unauthorized access!"})
     }
 
-	prisma.post.update({
+	await prisma.post.update({
 		where: {
 			id: body.id,
 			authorId: userId
@@ -99,6 +99,25 @@ blogRouter.put('/', async (c) => {
         return c.json({error : 'Internal server error'})
     }
 })
+
+blogRouter.get('/bulk', async (c) => {
+    try {
+        const prisma = new PrismaClient({
+            datasources: {
+                db: {
+                    url: c.env.DATABASE_URL,
+                },
+            },
+        });
+        const posts = await prisma.post.findMany({});
+        console.log(posts);
+        return c.json({ posts });
+    } catch (error: any) {
+        console.error("Error accessing the database:", error);
+        c.status(500);
+        return c.json({ error: 'Internal server error', details: error.message });
+    }
+});
 
 blogRouter.get('/:id', async (c) => {
 
@@ -119,20 +138,4 @@ blogRouter.get('/:id', async (c) => {
         c.status(500);
         return c.json({error : 'Internal server error'})
     }	
-})
-
-blogRouter.get('/bulk', async (c) => {
-    try{
-        const prisma = new PrismaClient({
-		    datasourceUrl: c.env?.DATABASE_URL,
-	    }).$extends(withAccelerate());
-	
-	    const posts = await prisma.post.findMany({});
-
-	    return c.json(posts);
-    }
-    catch(error) {
-        c.status(500);
-        return c.json({error : 'Internal server error'})
-    }
 })
