@@ -16,6 +16,8 @@ export const blogRouter = new Hono<{
 	}
 }>();
 
+
+//middleware to authenticate jwt
 blogRouter.use('/*', async (c, next) => {
 	const jwt = c.req.header('Authorization');
 	if (!jwt) {
@@ -32,6 +34,8 @@ blogRouter.use('/*', async (c, next) => {
 	await next()
 })
 
+
+//Add a new blog
 blogRouter.post("/post", async (c) => {
     try {
         const userId = c.get('userId');
@@ -287,6 +291,28 @@ blogRouter.post('/comment', async (c) => {
 })
 
 
+//show comments of a post
+blogRouter.get('/comment/:id', async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL
+    }).$extends(withAccelerate());
+
+    const id = c.req.param('id')
+
+    try {
+        const comments = await prisma.comment.findMany({
+            where: {
+                postId: Number(id)
+            }
+        })
+        return c.json(comments)
+    } catch (error) {
+        c.status(500);
+        return c.json("Error while fetching comments.")
+    }
+})
+
+
 //Delete a comment
 blogRouter.delete("/comment/:id", async (c) => {
     const id = c.req.param('id')
@@ -316,6 +342,32 @@ blogRouter.delete("/comment/:id", async (c) => {
         c.status(500);
         console.log(error)
         return c.json({error : 'Internal server error'})
+    }
+})
+
+
+//show all bookmarked posts
+blogRouter.get('/bookmarks', async (c) => {
+    const userId = c.get('userId');
+
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL
+    }).$extends(withAccelerate());
+
+    try {
+        const bookmarks = await prisma.bookmark.findMany({
+            where: {
+                userId
+            },
+            include: {
+                post: true // Include details of the associated post
+            }
+        })
+
+        return c.json(bookmarks)
+    } catch (error) {
+        c.status(500);
+        return c.json("Error while fetching bookmarks.")
     }
 })
 
@@ -372,7 +424,7 @@ blogRouter.delete("/bookmark/:id", async (c) => {
 })
 
 
-//View all topics
+//View all topics and their subtopics
 blogRouter.get('/topics', async (c) => {
     try {
         const prisma = new PrismaClient({
@@ -402,7 +454,7 @@ blogRouter.get('/topics', async (c) => {
 })
 
 
-//show all subtopics to the user to follow
+//show all subtopics to the new user to follow
 blogRouter.get('/alltopics', async (c) => {
     try {
         const prisma = new PrismaClient({
@@ -420,7 +472,7 @@ blogRouter.get('/alltopics', async (c) => {
 })
 
 
-//Search by Topic
+//Search by Topic and return the posts
 blogRouter.get('/topics/:id', async (c) => {
     const id = c.req.param('id')
 
