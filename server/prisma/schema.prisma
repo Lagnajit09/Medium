@@ -7,19 +7,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       String  @id @default(uuid())
-  email    String  @unique
-  name     String?
-  password String
-  posts    Post[]
-}
-
 model Post {
-  id        String  @id @default(uuid())
+  id        Int        @id @default(autoincrement())
   title     String
   content   String
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
+  published Boolean    @default(false)
   authorId  String
+  author    User       @relation(fields: [authorId], references: [id])
+  topics    Topic[]    @relation("PostTopics")
+  bookmark  Bookmark[]
+  comment   Comment[]
+}
+
+model Comment {
+  id      Int    @id @default(autoincrement())
+  comment String
+  postId  Int
+  Post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Bookmark {
+  id     Int    @id @default(autoincrement())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId Int
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model MainTopic {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  topics Topic[]
+}
+
+model Topic {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  mainTopicId Int?
+  mainTopic   MainTopic? @relation(fields: [mainTopicId], references: [id])
+  posts       Post[]     @relation("PostTopics")
+  users       User[]     @relation("UserTopics")
+}
+
+model User {
+  id       String     @id @default(uuid())
+  name     String?
+  email    String     @unique
+  password String
+  posts    Post[]
+  topics   Topic[]    @relation("UserTopics")
+  bookmark Bookmark[]
 }

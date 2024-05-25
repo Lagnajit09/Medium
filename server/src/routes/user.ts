@@ -23,11 +23,6 @@ userRouter.post('/signup', async (c) => {
     }).$extends(withAccelerate())
     
     let body;
-    const { success } = signupInput.safeParse(body);
-	if (!success) {
-		c.status(400);
-		return c.json({ error: "invalid input" });
-	}
 
     try{
         body = await c.req.json();
@@ -36,15 +31,33 @@ userRouter.post('/signup', async (c) => {
         return c.json({error: "Please provide valid credentials!"})
     }
 
+    const { success } = signupInput.safeParse(body);
+	if (!success) {
+		c.status(400);
+		return c.json({ error: "invalid input" });
+	}
+
     const saltRounds = 10;
     
     try{
         const hashedPassword = await bcrypt.hash(body.password, saltRounds)
 
+        const userExists = await prisma.user.findUnique({
+            where: {
+                email: body.email
+            }
+        })
+
+        if(userExists) {
+            c.status(405)
+            return c.json({error: "User already exists!"})
+        }
+
         const user = await prisma.user.create({
             data: {
                 email: body.email,
-                password: hashedPassword
+                password: hashedPassword,
+                name: body.name || ""
             }
         })
     

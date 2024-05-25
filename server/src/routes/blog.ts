@@ -142,7 +142,7 @@ blogRouter.get('/:id', async (c) => {
         
         const post = await prisma.post.findUnique({
             where: {
-                id
+                id: Number(id)
             }
         });
     
@@ -151,4 +151,35 @@ blogRouter.get('/:id', async (c) => {
         c.status(500);
         return c.json({error : 'Internal server error'})
     }	
+})
+
+blogRouter.delete("/:id", async (c) => {
+    const id = c.req.param('id')
+    const userId = c.get('userId')
+
+    try {
+        const prisma = new PrismaClient({
+            datasourceUrl: c.env?.DATABASE_URL	,
+        }).$extends(withAccelerate());
+
+        const body = await c.req.json();
+
+        if(body.userId !== userId) {
+            c.status(400)
+            return c.json({'error' : 'unauthorised access!'})
+        }
+
+        const post = await prisma.post.delete({
+            where: {
+                id: Number(id)
+            }
+        });
+
+        return c.json({'message': 'Deleted successfully!'})
+
+    } catch (error) {
+        c.status(500);
+        console.log(error)
+        return c.json({error : 'Internal server error'})
+    }
 })
