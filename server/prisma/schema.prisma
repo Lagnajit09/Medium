@@ -12,9 +12,11 @@ model Post {
   title     String
   content   String
   published Boolean    @default(false)
+  createdAt DateTime   @default(now())
   authorId  String
   author    User       @relation(fields: [authorId], references: [id])
-  topics    Topic[]    @relation("PostTopics")
+  topicId   Int
+  topic     Topic      @relation(fields: [topicId], references: [id])
   bookmark  Bookmark[]
   comment   Comment[]
 }
@@ -23,7 +25,9 @@ model Comment {
   id      Int    @id @default(autoincrement())
   comment String
   postId  Int
-  Post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
 }
 
 model Bookmark {
@@ -41,12 +45,12 @@ model MainTopic {
 }
 
 model Topic {
-  id          Int        @id @default(autoincrement())
-  name        String     @unique
-  mainTopicId Int?
-  mainTopic   MainTopic? @relation(fields: [mainTopicId], references: [id])
-  posts       Post[]     @relation("PostTopics")
-  users       User[]     @relation("UserTopics")
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  mainTopicId Int
+  mainTopic   MainTopic @relation(fields: [mainTopicId], references: [id])
+  posts       Post[]
+  users       User[]    @relation("UserTopics")
 }
 
 model User {
@@ -57,4 +61,5 @@ model User {
   posts    Post[]
   topics   Topic[]    @relation("UserTopics")
   bookmark Bookmark[]
+  comment  Comment[]
 }

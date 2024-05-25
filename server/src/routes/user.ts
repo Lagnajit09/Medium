@@ -68,10 +68,10 @@ userRouter.post('/signup', async (c) => {
         c.status(403);
         return c.json({ error: "error while signing up" });
     } 
-    })
+})
     
     
-    userRouter.post('/signin', async (c) => {
+userRouter.post('/signin', async (c) => {
         const prisma = new PrismaClient({
             datasourceUrl: c.env?.DATABASE_URL	,
         }).$extends(withAccelerate());
@@ -102,6 +102,41 @@ userRouter.post('/signup', async (c) => {
             c.status(403);
             return c.json({ error: "error while signing in" });
         }
+})
+
+userRouter.post('/user-topics/:id', async (c) => {
+
+    const userId = c.req.param('id')
+
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env?.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const body = await c.req.json();
+        const followedTopics = body.userTopics;
+
+        // Find the user by userId
+        // const user = await prisma.user.findUnique({
+        //   where: { id: userId },
+        //   include: { topics: true }, // Include the user's current followed topics
+        // });
     
+        // Update user's followed topics
+        await prisma.user.update({
+          where: { id: userId },
+          data: {
+            topics: {
+              // Replace the user's current followed topics with the new ones
+              set: followedTopics.map((topicId:String) => ({ id: topicId })),
+            },
+          },
+        });
         
-    })
+        return c.json({ message: 'Followed topics updated successfully' });
+      } catch (error) {
+        console.error('Error updating followed topics:', error);
+        c.status(500)
+        return c.json({ error: 'Failed to update followed topics' });
+      }
+})

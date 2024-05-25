@@ -3,6 +3,7 @@ import {  verify } from 'hono/jwt'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { createPostInput, updatePostInput } from "@lagnajit09/medium-zod"
+import { bodyLimit } from 'hono/body-limit';
 
 // Create the main Hono app
 export const blogRouter = new Hono<{
@@ -31,7 +32,7 @@ blogRouter.use('/*', async (c, next) => {
 	await next()
 })
 
-blogRouter.post("/", async (c) => {
+blogRouter.post("/post", async (c) => {
     try {
         const userId = c.get('userId');
 
@@ -47,30 +48,33 @@ blogRouter.post("/", async (c) => {
             return c.json({ error: "invalid input" });
         }
 
-        if(!body.title || !body.content) {
+        if(!body.title || !body.content || !body.topic) {
             c.status(410);
-            return c.json({error: "Please provide a title and a content."})
+            return c.json({error: "Insufficient data"})
         }
 
         const blog = await prisma.post.create({
             data: {
                 title: body.title,
                 content: body.content,
-                authorId: userId
+                authorId: userId,
+                topicId: Number(body.topic)
             }
         })
 
-        return c.json({blog})
+        return c.json(blog)
     } catch(error) {
+        console.error(error)
         c.status(500);
         return c.json({error : 'Internal server error'})
     }
     
 })
 
-blogRouter.put('/', async (c) => {
-    try {
 
+//update a blog
+blogRouter.put('/post', async (c) => {
+    try {
         const userId = c.get('userId');
 	    const prisma = new PrismaClient({
 		    datasourceUrl: c.env?.DATABASE_URL	,
@@ -84,9 +88,9 @@ blogRouter.put('/', async (c) => {
             return c.json({ error: "invalid input" });
         }
 
-        if(!body.title && !body.content) {
+        if(!body.title && !body.content && !body.topic) {
             c.status(410);
-            return c.json({error: "Please provide title or content."})
+            return c.json({error: "Insufficient data"})
         }
 
         if(body.userId !== userId) {
@@ -101,7 +105,8 @@ blogRouter.put('/', async (c) => {
 		    },
 		    data: {
 			    title: body.title,
-			    content: body.content
+			    content: body.content,
+                topicId: Number(body.topic)
 		    }
 	    });
 
@@ -113,7 +118,9 @@ blogRouter.put('/', async (c) => {
     }
 })
 
-blogRouter.get('/bulk', async (c) => {
+
+//get all blogs
+blogRouter.get('/post/bulk', async (c) => {
     try {
         const prisma = new PrismaClient({
             datasources: {
@@ -132,7 +139,68 @@ blogRouter.get('/bulk', async (c) => {
     }
 });
 
-blogRouter.get('/:id', async (c) => {
+
+//get user blogs
+blogRouter.get('/post/user-posts', async (c) => {
+    try {
+        const prisma = new PrismaClient({
+            datasources: {
+                db: {
+                    url: c.env.DATABASE_URL,
+                },
+            },
+        });
+
+        const body = await c.req.json();
+
+        const posts = await prisma.post.findMany({
+            where: {
+                authorId: body.userId
+            }
+        });
+        console.log(posts);
+        return c.json({ posts });
+    } catch (error: any) {
+        console.error("Error accessing the database:", error);
+        c.status(500);
+        return c.json({ error: 'Internal server error', details: error.message });
+    }
+});
+
+
+//get blogs of user-followed topics
+blogRouter.get('/post/followed-posts', async (c) => {
+
+    const userId = c.get('userId');
+
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL
+    }).$extends(withAccelerate());
+
+    try {
+        // Find the user by userId and include their followed topics
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          include: { topics: { include: { posts: true } } },
+        });
+    
+        // Extract posts from user's followed topics
+        let posts = Array()
+        if(user) {
+            posts = user.topics.reduce((allPosts, topic:any) => allPosts.concat(topic.posts), []);
+        }
+    
+        return c.json(posts);
+      } catch (error) {
+        console.error('Error fetching posts for followed topics:', error);
+        c.status(500)
+        return c.json({ error: 'Failed to fetch posts for followed topics' });
+      }
+})
+
+
+//get a particular blog
+blogRouter.get('/post/:id', async (c) => {
 
     try {
         const id = c.req.param('id');
@@ -153,7 +221,9 @@ blogRouter.get('/:id', async (c) => {
     }	
 })
 
-blogRouter.delete("/:id", async (c) => {
+
+//delete a blog
+blogRouter.delete("/post/:id", async (c) => {
     const id = c.req.param('id')
     const userId = c.get('userId')
 
@@ -183,3 +253,238 @@ blogRouter.delete("/:id", async (c) => {
         return c.json({error : 'Internal server error'})
     }
 })
+
+
+//Add a comment on a post
+blogRouter.post('/comment', async (c) => {
+    try {
+        const userId = c.get('userId');
+
+        const prisma = new PrismaClient({
+            datasourceUrl: c.env.DATABASE_URL
+        }).$extends(withAccelerate());
+
+        const body = await c.req.json();
+
+        if(!body.postId || !body.comment) {
+            c.status(410);
+            return c.json({error: "Insuffiecient data"})
+        }
+
+        const comment = await prisma.comment.create({
+            data: {
+                comment: body.comment,
+                userId: userId,
+                postId: Number(body.postId)
+            }
+        })
+
+        return c.json(comment)
+    } catch(error) {
+        c.status(500);
+        return c.json({error : 'Internal server error'})
+    }
+})
+
+
+//Delete a comment
+blogRouter.delete("/comment/:id", async (c) => {
+    const id = c.req.param('id')
+    const userId = c.get('userId')
+
+    try {
+        const prisma = new PrismaClient({
+            datasourceUrl: c.env?.DATABASE_URL	,
+        }).$extends(withAccelerate());
+
+        const body = await c.req.json();
+
+        if(body.userId !== userId) {
+            c.status(400)
+            return c.json({'error' : 'unauthorised access!'})
+        }
+
+        const comment = await prisma.comment.delete({
+            where: {
+                id: Number(id)
+            }
+        });
+
+        return c.json({'message': 'Deleted successfully!'})
+
+    } catch (error) {
+        c.status(500);
+        console.log(error)
+        return c.json({error : 'Internal server error'})
+    }
+})
+
+
+//Save a post
+blogRouter.post('/bookmark/:id', async (c) => {
+    const userId = c.get('userId');
+    const id = c.req.param('id');
+
+    try {
+        const prisma = new PrismaClient({
+            datasourceUrl: c.env.DATABASE_URL
+        }).$extends(withAccelerate());
+
+        const bookmark = await prisma.bookmark.create({
+            data: {
+                userId: userId,
+                postId: Number(id)
+            }
+        })
+
+        return c.json(bookmark)
+    } catch(error) {
+        c.status(500);
+        return c.json({error : 'Error while saving the blog.'})
+    }
+})
+
+
+//Unsave a post
+blogRouter.delete("/bookmark/:id", async (c) => {
+    const id = c.req.param('id')
+    const userId = c.get('userId')
+
+    try {
+        const prisma = new PrismaClient({
+            datasourceUrl: c.env?.DATABASE_URL	,
+        }).$extends(withAccelerate());
+
+        const bookmark = await prisma.bookmark.delete({
+            where: {
+                id: Number(id),
+                userId: userId
+            }
+        });
+
+        return c.json({'message': 'Deleted successfully!'})
+
+    } catch (error) {
+        c.status(500);
+        console.log(error)
+        return c.json({error : 'Error while unsaving thhe blog.'})
+    }
+})
+
+
+//View all topics
+blogRouter.get('/topics', async (c) => {
+    try {
+        const prisma = new PrismaClient({
+            datasourceUrl: c.env?.DATABASE_URL	,
+        }).$extends(withAccelerate());
+
+        const mainTopics = await prisma.mainTopic.findMany({
+            include: {
+              topics: true // Include subtopics
+            }
+        });
+
+        // Structure the topics in a better way
+        const structuredTopics = mainTopics.map(mainTopic => {
+        return {
+          mainTopic: mainTopic.name,
+          subtopics: mainTopic.topics.map(topic => topic.name)
+        };
+        });
+  
+        return c.json(structuredTopics);
+    } catch (error) {
+        console.error('Error fetching topics:', error);
+        c.status(500)
+        return c.json({ error: 'Failed to fetch topics' });
+    }
+})
+
+
+//show all subtopics to the user to follow
+blogRouter.get('/alltopics', async (c) => {
+    try {
+        const prisma = new PrismaClient({
+            datasourceUrl: c.env?.DATABASE_URL	,
+        }).$extends(withAccelerate());
+
+        const subtopics = await prisma.topic.findMany({});
+        let topics = subtopics.map((i) => i.name);
+
+        return c.json(topics)
+    } catch (error) {
+        c.status(404);
+        return c.json("No topics available")
+    }
+})
+
+
+//Search by Topic
+blogRouter.get('/topics/:id', async (c) => {
+    const id = c.req.param('id')
+
+    try {
+        let posts = Array();
+        const prisma = new PrismaClient({
+            datasourceUrl: c.env?.DATABASE_URL	,
+        }).$extends(withAccelerate());
+
+        const mainTopic = await prisma.mainTopic.findUnique({
+            where: { id: Number(id) },
+            include: { topics: { include: { posts: true } } }
+          });
+
+        if(mainTopic) {
+            mainTopic.topics.forEach(topic => {
+                posts = posts.concat(topic.posts);
+              });
+        } else {
+            const topic = await prisma.topic.findUnique({
+                where: { id: Number(id) },
+                include: { posts: true }
+            });
+        
+            if(topic) {
+                posts = topic.posts;
+            }
+        }
+
+        return c.json(posts);
+
+    } catch (error) {
+        console.error(error)
+        c.status(500);
+        return c.json({error: "Error while fetching topic posts."})
+    }
+})
+
+
+blogRouter.post('/addmaintopic', async (c) => {
+//     const topic = await c.req.json()
+
+//     try {
+
+//         const prisma = new PrismaClient({
+//             datasourceUrl: c.env?.DATABASE_URL	,
+//         }).$extends(withAccelerate());
+
+//         await prisma.mainTopic.create({
+//             data: {
+//                 name: topic.name
+//             }
+//         })
+
+//         return c.json("Created")
+
+        
+//     } catch (error) {
+//         c.status(500)
+//         return c.json("error")
+//     }
+})
+
+
+
+//user follow topic
+//firebase storage integration for image
