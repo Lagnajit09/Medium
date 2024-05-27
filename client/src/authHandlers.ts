@@ -1,4 +1,4 @@
-import { deleteSessionById } from "./appwrite";
+import { createSessionWithEmail, deleteSessionById } from "./appwrite";
 import { SERVER } from "./config";
 
 export const storeUserData = async (user: any, setAuthUser: Function) => {
@@ -8,7 +8,7 @@ export const storeUserData = async (user: any, setAuthUser: Function) => {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({email: user.email, password: '', name: user.name}),
+            body: JSON.stringify({email: user.email, password: user.password || '', name: user.name}),
         });
         
         if(response.status === 405) {
@@ -36,7 +36,7 @@ export const logInUser = async (user: any, setAuthUser: Function) => {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({email: user.email, password: ''}),
+            body: JSON.stringify({email: user.email, password: user.password || ''}),
         })
         if(response.status === 405) {
             console.log("User not found!");
@@ -50,15 +50,16 @@ export const logInUser = async (user: any, setAuthUser: Function) => {
         setAuthUser(data.user);
         localStorage.setItem('medium-token', data.jwt);
         localStorage.setItem('medium-userId', data.user.id);
+
     } catch (error) {
         console.error('Error while signing in!')
     }
   }
 
-export const logOutHandler = (setAuthUser:Function, setAuthenticated: Function, sessionId: string) => {
-    setAuthUser({});
-    setAuthenticated(false)
+export const logOutHandler = (setAuthUser:Function, setAuthenticated: Function) => {
     localStorage.removeItem('medium-token');
     localStorage.removeItem('medium-userId');
-    deleteSessionById(sessionId);
+    setAuthUser({});
+    setAuthenticated(false)
+    deleteSessionById();
 } 

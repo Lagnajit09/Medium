@@ -1,23 +1,27 @@
 import  { useEffect, useRef, useState } from 'react';
-import {  googleAuth } from "../appwrite.ts"
+import {  googleAuth, handleSignup } from "../appwrite.ts"
 import Input from '../components/Input.js';
 import Button from '../components/Button.js';
 import { FaGoogle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { storeUserData } from '../authHandlers.ts';
 import { authUserAtom } from '../store/authAtom.ts';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { loadingAtom } from '../store/loader.ts';
+import Loading from '../components/Loading.tsx';
 
 interface signupPropsTypes {
   setShowSignUp: Function;
   setShowSignIn: Function;
+  setAuthenticated: Function;
 }
 
-const Signup = ({setShowSignUp, setShowSignIn}: signupPropsTypes) => {
+const Signup = ({setShowSignUp, setShowSignIn, setAuthenticated}: signupPropsTypes) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const setAuthUser = useSetRecoilState(authUserAtom)
+  const setAuthUser = useSetRecoilState(authUserAtom);
+  const [loading, setLoading] = useRecoilState(loadingAtom)
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -35,10 +39,22 @@ const Signup = ({setShowSignUp, setShowSignIn}: signupPropsTypes) => {
     };
   }, []);
 
-  const signupHandler = () => {
-    // Handle sign in
-    storeUserData({email, password, username}, setAuthUser)
+  const signupHandler = async (event:any) => {
+    setLoading(true);
+    try {
+      event.preventDefault()
+      const user = await handleSignup(email, password, username);
+      await storeUserData(user, setAuthUser);
+      setAuthenticated(true);
+    } catch (error) {
+      console.error("Error while signing up.")
+    } finally {
+      setLoading(false)
+    }
+
   };
+
+  if(loading) return <Loading />
 
   return (
     <div className="flex flex-col items-center p-5 h-[80vh] w-screen bg-white bg-opacity-95 absolute z-10">
@@ -72,7 +88,7 @@ const Signup = ({setShowSignUp, setShowSignIn}: signupPropsTypes) => {
         <Button 
           title="Sign Up" 
           type="submit" 
-          onClick={signupHandler} 
+          onClick={(e)=>signupHandler(e)} 
           buttonStyles="mt-3 w-[40%] border-2 border-black text-white" 
         />
 

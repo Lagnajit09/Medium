@@ -20,10 +20,9 @@ interface navbarPropsTypes {
     setShowSignIn: Function;
     setAuthenticated: Function;
     authenticated: boolean;
-    session: string;
 }
 
-const Navbar = ({setShowSignIn, setShowSignUp, authenticated, setAuthenticated, session}: navbarPropsTypes) => {
+const Navbar = ({setShowSignIn, setShowSignUp, authenticated, setAuthenticated}: navbarPropsTypes) => {
     const navigate = useNavigate()
     const [authUser, setAuthUser] = useRecoilState(authUserAtom)
     const [showDropdown, setShowDropdown] = useState(false)
@@ -65,7 +64,7 @@ const Navbar = ({setShowSignIn, setShowSignUp, authenticated, setAuthenticated, 
             <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black'><span>Settings</span></div>
             <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black'><span>Help</span></div>
             <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black'><span>Membership</span></div>
-            <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black' onClick={()=>{logOutHandler(setAuthUser, setAuthenticated, session); navigate('/')}}><span>Sign Out</span></div>
+            <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black' onClick={()=>{logOutHandler(setAuthUser, setAuthenticated); navigate('/')}}><span>Sign Out</span></div>
         </div>}
     </div>
   )

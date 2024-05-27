@@ -2,20 +2,24 @@ import  { useEffect, useRef, useState } from 'react';
 import Input from '../components/Input.js';
 import Button from '../components/Button.js';
 import { FaGoogle } from 'react-icons/fa';
-import { googleAuth } from '../appwrite.js';
+import { googleAuth, handleLogin } from '../appwrite.js';
 import { logInUser } from '../authHandlers.js';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { authUserAtom } from '../store/authAtom.js';
+import Loading from '../components/Loading.js';
+import { loadingAtom } from '../store/loader.js';
 
 interface signinPropsTypes {
   setShowSignIn: Function;
   setShowSignUp: Function;
+  setAuthenticated: Function;
 }
 
-const Signin = ({setShowSignIn, setShowSignUp}: signinPropsTypes) => {
+const Signin = ({setShowSignIn, setShowSignUp, setAuthenticated}: signinPropsTypes) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const setAuthUser = useSetRecoilState(authUserAtom)
+  const [loading, setLoading] = useRecoilState(loadingAtom);
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -32,10 +36,22 @@ const Signin = ({setShowSignIn, setShowSignUp}: signinPropsTypes) => {
     };
   }, []);
 
-  const signinHandler = () => {
+  const signinHandler = async (event: any) => {
+    setLoading(true)
     // Handle sign in
-    logInUser({email, password}, setAuthUser)
+    try {
+      event.preventDefault()
+      const user = await handleLogin(email, password);
+      await logInUser(user, setAuthUser);
+      setAuthenticated(true);
+    } catch (error) {
+      console.error("Error while signing in.")
+    } finally {
+      setLoading(false)
+    }
   };
+
+  if(loading) return <Loading />
 
   return (
     <div className="flex flex-col items-center p-5 h-[80vh] w-screen bg-white bg-opacity-95 absolute z-10 ">

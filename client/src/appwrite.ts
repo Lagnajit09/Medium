@@ -1,4 +1,4 @@
-import { Client, Account, OAuthProvider } from "appwrite";
+import { Client, Account, OAuthProvider, Models } from "appwrite";
 import {CLIENT} from './config'
 
 export const client = new Client()
@@ -32,8 +32,8 @@ export const isNewUser = (user: any) => {
   // Assuming a user is new if their registration date is recent and their email is verified
   const registrationDate = new Date(user.registration);
   const isNew = registrationDate.getTime() > (Date.now() - 12 * 60 * 60 * 1000); // Consider new if registered within the last 12 hours
-  const isEmailVerified = user.emailVerification;
-  return isNew && isEmailVerified;
+  // const isEmailVerified = user.emailVerification;
+  return isNew;
 }
 
 // Function to create session using email
@@ -50,38 +50,74 @@ export const createSessionWithEmail = async (email: string, password: string) =>
 };
 
 // Function to fetch session data for the current user
-export const fetchUserSession = async () => {
-    try {
-        // Fetch all sessions
-        const allSessions = await account.listSessions();
+export const fetchUserSession = async (sessionId: string) => {
+  try {
+    // Fetch all sessions
+    const userSession = await account.getSession(sessionId);
 
-        console.log(allSessions)
+    console.log(userSession);
 
-        // Get current user's ID
-        const user = await account.get();
-        const userId = user.$id;
+    if(!userSession) return { userSession: null, user: null };
 
-        console.log(user)
+    // Get current user's ID
+    const user = await account.get();
 
-        // Filter sessions to get only the session associated with the current user
-        const userSession = allSessions.sessions.find(session => session.userId === userId);
-
-        console.log('User Session:', userSession);
-        return {userSession, user}; // Return user session data if found
-    } catch (error) {
-        console.error('Error fetching user session:', error);
-        throw error; // Rethrow error for handling at higher levels
+    if (user) {
+      return { userSession, user }; // Return user session data if found
+    } else {
+      return { userSession: null, user: null };
     }
+  } catch (error) {
+    console.error('Error fetching user session:', error);
+    throw error; // Rethrow error for handling at higher levels
+  }
 };
 
 //function to delete session after log out
-export const deleteSessionById = async (sessionId: string) => {
+export const deleteSessionById = async () => {
+  const sessionId = localStorage.getItem('sessionId')
+  if(!sessionId) return;
   try {
       // Delete session by session ID
       await account.deleteSession(sessionId);
       console.log('Session deleted successfully');
+      localStorage.removeItem('sessionId')
   } catch (error) {
       console.error('Error deleting session:', error);
       throw error; // Rethrow error for handling at higher levels
+  }
+};
+
+
+// Signup handler
+export const handleSignup = async (
+  email: string,
+  password: string,
+  name: string
+): Promise<Models.User<Models.Preferences> | undefined> => {
+  try {
+    await account.create('unique()', email, password, name);
+    const user = await handleLogin(email, password);
+    return user;
+  } catch (error) {
+    console.error(error);
+    console.error('Failed to create user');
+  }
+};
+
+
+// Login handler
+export const handleLogin = async (
+  email: string,
+  password: string
+): Promise<Models.User<Models.Preferences> | undefined> => {
+  try {
+    const session = await account.createEmailPasswordSession(email, password);
+    localStorage.setItem('sessionId', session.$id);
+    const user = await account.get();
+    return user;
+  } catch (error) {
+    console.error(error);
+    console.error('Failed to log in');
   }
 };

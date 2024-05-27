@@ -5,60 +5,63 @@ import Landing from './pages/landing'
 import Footer from './components/Footer'
 import Home from './pages/home'
 import { useEffect, useState } from 'react'
-import { fetchUserSession } from './appwrite'
+import { fetchUserSession, handleLogin } from './appwrite'
 import Loading from './components/Loading'
 import { logInUser } from './authHandlers'
 import { RecoilRoot, useRecoilState } from 'recoil'
 import { authUserAtom } from './store/authAtom'
+import { loadingAtom } from './store/loader'
 
 function App() {
   const [authUser, setAuthUser] = useRecoilState(authUserAtom)
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
-  const [sessionId, setSessionId] = useState('')
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useRecoilState(loadingAtom);
 
   useEffect(() => {
     const isAuthenticated = async () => {
-      const token = localStorage.getItem('medium-userId')
+
+      setLoading(true);
+      const sessionId = localStorage.getItem('sessionId')
       try {
-        const {userSession, user} = await fetchUserSession()
-
-      if(userSession) setSessionId(userSession.$id)
-
-      if(userSession || token) {
-        setAuthenticated(true)
-        navigate('/home')
-        logInUser(user, setAuthUser)
-      } else {
-        setAuthenticated(false)
-      }
+        if (sessionId) {
+          const { userSession, user } = await fetchUserSession(sessionId);
+          setAuthenticated(true);
+          if (user) {
+            setAuthUser(user);
+          }
+        } else {
+          setAuthenticated(false);
+        }
       } catch (error) {
-        console.error('Error while fetching user session!')
+        console.error('Error while fetching user session!');
+        setAuthenticated(false);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-      
-    }
-    isAuthenticated()
-  }, [authUser])
+    };
+
+    isAuthenticated();
+  }, []);
+
+  if (loading) {
+    return <Loading /> // Display a loading indicator while checking authentication
+  }
 
 
   return (
     <>
-        {!loading && <Navbar setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} authenticated={authenticated} setAuthenticated={setAuthenticated} session={sessionId} />}
-        {loading && <Loading />}
+        {!loading && <Navbar setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} authenticated={authenticated} setAuthenticated={setAuthenticated} />}
           {!loading && <Routes>
              <Route path="/" 
             element={
               !authenticated ?
-              <Landing showSignIn={showSignIn} showSignUp={showSignUp} setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} /> 
+              <Landing showSignIn={showSignIn} showSignUp={showSignUp} setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} setAuthenticated={setAuthenticated} /> 
               : 
               <Home />
             } />
-            <Route path="/home" element={<Home />} />
+            {authenticated && <Route path="/home" element={<Home />} />}
             <Route path="/blog/:id" element={<Blog />} />
           </Routes>}
         {!loading && <Footer />}
