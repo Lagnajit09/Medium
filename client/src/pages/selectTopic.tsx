@@ -27,7 +27,7 @@ const Topic = (props: {item:{id:number, name: string, mainTopicId: number}, key:
     }, [clicked])
 
     return (
-        <div className={`flex gap-2 items-center border-2 rounded-3xl px-4 py-2 mx-2 my-1 bg-gray-100 cursor-pointer ${styles}`} onClick={() => {setClicked(!clicked)} }  >
+        <div className={`flex gap-2 items-center border-2 rounded-full px-4 py-2 mx-2 my-1 bg-gray-100 cursor-pointer ${styles}`} onClick={() => {setClicked(!clicked)} }  >
             <p>{props.item.name}</p> 
             {clicked? <PiCheck /> : <PiPlus />}
         </div>

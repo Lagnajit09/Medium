@@ -68,3 +68,27 @@ export const updateUserTopics = async (userTopics:any) => {
         console.error('Failed to fetch user topics topics!')
     }
 }
+
+
+//method to fetch recommended topics
+export const fetchRecommendedTopics = async () => {
+
+    try {
+        const response = await fetch(`${SERVER}/api/v1/blog/${userId}/recommended-topics`, {
+            headers: {
+                Authorization: `Bearer ${jwt}`
+            }
+        })
+
+        const data = await response.json();
+
+        if(response.status === 404) {
+            console.error('User not found!')
+            return {}
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Failed to fetch recommended topics!')
+    }
+}
