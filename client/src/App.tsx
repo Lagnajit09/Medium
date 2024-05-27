@@ -1,16 +1,16 @@
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import  Blog  from './pages/Blog'
 import Navbar from './components/Navbar'
 import Landing from './pages/landing'
 import Footer from './components/Footer'
 import Home from './pages/home'
 import { useEffect, useState } from 'react'
-import { fetchUserSession, handleLogin } from './appwrite'
+import { fetchUserSession } from './appwrite'
 import Loading from './components/Loading'
-import { logInUser } from './authHandlers'
 import { RecoilRoot, useRecoilState } from 'recoil'
 import { authUserAtom } from './store/authAtom'
 import { loadingAtom } from './store/loader'
+import SelectTopic from './pages/selectTopic'
 
 function App() {
   const [authUser, setAuthUser] = useRecoilState(authUserAtom)
@@ -26,7 +26,7 @@ function App() {
       const sessionId = localStorage.getItem('sessionId')
       try {
         if (sessionId) {
-          const { userSession, user } = await fetchUserSession(sessionId);
+          const { userSession, user } = await fetchUserSession();
           setAuthenticated(true);
           if (user) {
             setAuthUser(user);
@@ -61,7 +61,11 @@ function App() {
               : 
               <Home />
             } />
-            {authenticated && <Route path="/home" element={<Home />} />}
+            {authenticated && 
+            <>
+              <Route path="/home" element={<Home />} />
+              <Route path="/topics" element={<SelectTopic />} />
+            </> }
             <Route path="/blog/:id" element={<Blog />} />
           </Routes>}
         {!loading && <Footer />}

@@ -3,8 +3,7 @@ import {  googleAuth, handleSignup } from "../appwrite.ts"
 import Input from '../components/Input.js';
 import Button from '../components/Button.js';
 import { FaGoogle } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { storeUserData } from '../authHandlers.ts';
+import { storeUserData } from '../handlers/authHandlers.ts';
 import { authUserAtom } from '../store/authAtom.ts';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { loadingAtom } from '../store/loader.ts';
@@ -42,7 +41,7 @@ const Signup = ({setShowSignUp, setShowSignIn, setAuthenticated}: signupPropsTyp
   const signupHandler = async (event:any) => {
     setLoading(true);
     try {
-      event.preventDefault()
+      event.preventDefault();
       const user = await handleSignup(email, password, username);
       await storeUserData(user, setAuthUser);
       setAuthenticated(true);

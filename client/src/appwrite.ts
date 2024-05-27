@@ -31,7 +31,7 @@ export const getUserData = async () => {
 export const isNewUser = (user: any) => {
   // Assuming a user is new if their registration date is recent and their email is verified
   const registrationDate = new Date(user.registration);
-  const isNew = registrationDate.getTime() > (Date.now() - 12 * 60 * 60 * 1000); // Consider new if registered within the last 12 hours
+  const isNew = registrationDate.getTime() > (Date.now() - 1 * 60 * 60 * 1000); // Consider new if registered within the last 1 hour
   // const isEmailVerified = user.emailVerification;
   return isNew;
 }
@@ -50,7 +50,10 @@ export const createSessionWithEmail = async (email: string, password: string) =>
 };
 
 // Function to fetch session data for the current user
-export const fetchUserSession = async (sessionId: string) => {
+export const fetchUserSession = async () => {
+  const sessionId = localStorage.getItem('sessionId')
+  if(!sessionId) return { userSession: null, user: null };
+
   try {
     // Fetch all sessions
     const userSession = await account.getSession(sessionId);

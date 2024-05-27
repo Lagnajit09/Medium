@@ -140,3 +140,35 @@ userRouter.post('/user-topics/:id', async (c) => {
         return c.json({ error: 'Failed to update followed topics' });
       }
 })
+
+
+// Route to fetch topics followed by a specific user
+userRouter.get('/:userId/topics', async (c) => {
+    const userId  = c.req.param('userId');
+
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env?.DATABASE_URL,
+    }).$extends(withAccelerate());
+  
+    try {
+      const userWithTopics = await prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+        select: {
+          topics: true,
+        },
+      });
+  
+      if (!userWithTopics) {
+        c.status(404);
+        return c.json({ message: 'User not found' });
+      }
+  
+      return c.json(userWithTopics.topics);
+    } catch (error) {
+      console.error(error);
+      c.status(500)
+      c.json({ message: 'Internal server error' });
+    }
+  });

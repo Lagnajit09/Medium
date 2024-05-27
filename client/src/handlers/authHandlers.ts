@@ -1,5 +1,5 @@
-import { createSessionWithEmail, deleteSessionById } from "./appwrite";
-import { SERVER } from "./config";
+import { createSessionWithEmail, deleteSessionById } from "../appwrite";
+import { SERVER } from "../config";
 
 export const storeUserData = async (user: any, setAuthUser: Function) => {
     try {

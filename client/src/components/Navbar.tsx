@@ -6,11 +6,11 @@ import { useRecoilState } from 'recoil';
 import { authUserAtom } from '../store/authAtom';
 import { RxPencil2 } from "react-icons/rx";
 import { GoBell } from "react-icons/go";
-import { FaRegCircleUser } from "react-icons/fa6";
-import { FiSettings } from "react-icons/fi";
-import { FaRegBookmark } from "react-icons/fa6";
-import { FiHelpCircle } from "react-icons/fi";
-import { logOutHandler } from '../authHandlers';
+// import { FaRegCircleUser } from "react-icons/fa6";
+// import { FiSettings } from "react-icons/fi";
+// import { FaRegBookmark } from "react-icons/fa6";
+// import { FiHelpCircle } from "react-icons/fi";
+import { logOutHandler } from '../handlers/authHandlers';
 import { useState } from 'react';
 
 

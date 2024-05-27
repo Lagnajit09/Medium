@@ -3,7 +3,7 @@ import Input from '../components/Input.js';
 import Button from '../components/Button.js';
 import { FaGoogle } from 'react-icons/fa';
 import { googleAuth, handleLogin } from '../appwrite.js';
-import { logInUser } from '../authHandlers.js';
+import { logInUser } from '../handlers/authHandlers.js';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { authUserAtom } from '../store/authAtom.js';
 import Loading from '../components/Loading.js';

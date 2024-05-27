@@ -462,9 +462,9 @@ blogRouter.get('/alltopics', async (c) => {
         }).$extends(withAccelerate());
 
         const subtopics = await prisma.topic.findMany({});
-        let topics = subtopics.map((i) => i.name);
+        // let topics = subtopics.map((i) => i.name);
 
-        return c.json(topics)
+        return c.json(subtopics)
     } catch (error) {
         c.status(404);
         return c.json("No topics available")
