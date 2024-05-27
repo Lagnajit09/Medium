@@ -537,6 +537,111 @@ blogRouter.post('/addmaintopic', async (c) => {
 })
 
 
+// Route to check and update recommended topics for a user
+blogRouter.get('/:userId/recommended-topics', async (c) => {
+    const  userId  = c.req.param('userId');
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env?.DATABASE_URL	,
+    }).$extends(withAccelerate());
+  
+    try {
+      // Fetch the user's followed topics
+      const userWithTopics = await prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+        select: {
+          topics: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+  
+      if (!userWithTopics) {
+        c.status(404)
+        return c.json({ message: 'User not found' });
+      }
+  
+      const followedTopicIds = userWithTopics.topics.map(topic => topic.id);
+  
+      // Fetch all topics excluding the followed topics
+      const allTopics = await prisma.topic.findMany({
+        where: {
+          id: {
+            notIn: followedTopicIds,
+          },
+        },
+      });
+  
+      // Fetch current recommended topics for the user
+      let recommendedTopics = await prisma.recommendedTopic.findMany({
+        where: {
+          userId: userId,
+        },
+        include: {
+          topic: true,
+        },
+      });
+  
+      // If recommended topics are less than 7, add more topics
+      if (recommendedTopics.length < 7) {
+        const topicsToAdd = allTopics.filter(
+          topic => !recommendedTopics.some(rt => rt.topicId === topic.id)
+        );
+  
+        const newRecommendedTopics = topicsToAdd.slice(0, 7 - recommendedTopics.length).map(topic => ({
+          userId: userId,
+          topicId: topic.id,
+        }));
+  
+        await prisma.recommendedTopic.createMany({
+          data: newRecommendedTopics,
+        });
+  
+        recommendedTopics = await prisma.recommendedTopic.findMany({
+          where: {
+            userId: userId,
+          },
+          include: {
+            topic: true,
+          },
+        });
+      }
+  
+      // Ensure there are exactly 7 recommended topics
+      if (recommendedTopics.length > 7) {
+        const excessTopics = recommendedTopics.slice(7);
+  
+        await prisma.recommendedTopic.deleteMany({
+          where: {
+            id: {
+              in: excessTopics.map(topic => topic.id),
+            },
+          },
+        });
+  
+        recommendedTopics = await prisma.recommendedTopic.findMany({
+          where: {
+            userId: userId,
+          },
+          include: {
+            topic: true,
+          },
+        });
+      }
+  
+      return c.json(recommendedTopics.map(rt => rt.topic));
+    } catch (error) {
+      console.error(error);
+      c.status(500)
+      return c.json({ message: 'Internal server error' });
+    }
+  });
+
+
 
 //user follow topic
 //firebase storage integration for image

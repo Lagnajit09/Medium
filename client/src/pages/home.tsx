@@ -6,6 +6,8 @@ import { logInUser, storeUserData } from '../handlers/authHandlers';
 import { fetchAllTopics, fetchUserTopics } from '../handlers/userHandlers';
 import { userTopicsAtom } from '../store/userAtom';
 import { useNavigate } from 'react-router-dom';
+import Blogs from '../components/Blogs';
+import HomeRight from '../components/HomeRight';
 
 const home = () => {
     const [authUser, setAuthUser] = useRecoilState(authUserAtom);
@@ -49,7 +51,10 @@ const home = () => {
 
 
   return (
-    <div className='min-h-[80vh]'>home</div>
+    <div className='min-h-[80vh] flex w-[80%] mx-auto'>
+      <Blogs/>
+      <HomeRight/>
+    </div>
   )
 }
 

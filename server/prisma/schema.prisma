@@ -45,21 +45,31 @@ model MainTopic {
 }
 
 model Topic {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique
-  mainTopicId Int
-  mainTopic   MainTopic @relation(fields: [mainTopicId], references: [id])
-  posts       Post[]
-  users       User[]    @relation("UserTopics")
+  id               Int                @id @default(autoincrement())
+  name             String             @unique
+  mainTopicId      Int
+  mainTopic        MainTopic          @relation(fields: [mainTopicId], references: [id])
+  posts            Post[]
+  users            User[]             @relation("UserTopics")
+  RecommendedTopic RecommendedTopic[]
 }
 
 model User {
-  id       String     @id @default(uuid())
-  name     String?
-  email    String     @unique
-  password String
-  posts    Post[]
-  topics   Topic[]    @relation("UserTopics")
-  bookmark Bookmark[]
-  comment  Comment[]
+  id               String             @id @default(uuid())
+  name             String?
+  email            String             @unique
+  password         String
+  posts            Post[]
+  topics           Topic[]            @relation("UserTopics")
+  bookmark         Bookmark[]
+  comment          Comment[]
+  RecommendedTopic RecommendedTopic[]
+}
+
+model RecommendedTopic {
+  id      Int    @id @default(autoincrement())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topicId Int
+  topic   Topic  @relation(fields: [topicId], references: [id])
 }
