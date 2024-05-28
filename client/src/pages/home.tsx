@@ -38,7 +38,7 @@ const home = () => {
 
         if(userFetchedTopics.length < 5) {
           const allTopics = await fetchAllTopics();
-          return navigate('/topics', {
+          return navigate('/get-started/topics', {
             state: allTopics
           })
         }

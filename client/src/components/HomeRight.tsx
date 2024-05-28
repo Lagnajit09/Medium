@@ -31,11 +31,33 @@ const HomeRight = () => {
 
     }, [userTopics])
 
+    useEffect(() => {
+        const handleScroll = () => {
+            const parentDiv = document.getElementById('recommended-topics');
+            const scrollPosition = window.scrollY;
+            const viewportHeight = window.innerHeight;
+
+            if(!parentDiv) return;
+
+            if (scrollPosition >= viewportHeight * 0.1) {
+                parentDiv.style.top = '0';
+            } else {
+                parentDiv.style.top = '';
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
   return (
-    <div className='flex w-[30%] border-l-2 px-5'>
+    <div id='recommended-topics' className='flex w-[22%] border-l-2 px-5 fixed right-32 bg-white h-[100vh]'>
         <div className='mt-10'>
             <p className=' font-semibold text-base text-gray-700'>Recommended Topics</p>
-            <div className=' flex flex-wrap items-center justify-start mt-5'>
+            <div className=' flex flex-wrap items-center justify-start mt-3'>
                 {recommended.map((rt, index) => <Recommended topic={rt} key={index} loading={loading} />)}
             </div>
         </div>
@@ -51,7 +73,7 @@ const Recommended = ({topic, key, loading}: recommendedType) => {
                     <Skeleton variant="rectangular" width={80} height={30} className=' rounded-3xl' />
                 </div> 
                 : 
-                <div className=' mx-2 my-1 rounded-full px-4 py-2 flex items-center bg-gray-100 text-gray-700 cursor-pointer'>
+                <div className=' mx-2 my-1 rounded-full px-4 py-2 flex items-center bg-gray-100 text-black cursor-pointer'>
                     {topic.name}
                 </div>
             }

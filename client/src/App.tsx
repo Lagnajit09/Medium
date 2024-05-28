@@ -64,7 +64,7 @@ function App() {
             {authenticated && 
             <>
               <Route path="/home" element={<Home />} />
-              <Route path="/topics" element={<SelectTopic />} />
+              <Route path="/get-started/topics" element={<SelectTopic />} />
             </> }
             <Route path="/blog/:id" element={<Blog />} />
           </Routes>}

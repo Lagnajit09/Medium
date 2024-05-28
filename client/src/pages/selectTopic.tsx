@@ -4,9 +4,10 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { PiPlus } from "react-icons/pi";
 import { PiCheck } from "react-icons/pi";
 import { updateUserTopics } from '../handlers/userHandlers';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { loadingAtom } from '../store/loader';
 import Loading from '../components/Loading';
+import { userTopicsAtom } from '../store/userAtom';
 
 const Topic = (props: {item:{id:number, name: string, mainTopicId: number}, key:number, selected: any, setSelected: Function}) => {
 
@@ -38,7 +39,8 @@ const SelectTopic = () => {
     const {state} = useLocation();
     const [selected, setSelected] = useState([]);
     const [loading, setLoading] = useRecoilState(loadingAtom)
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const setUserTopics = useSetRecoilState(userTopicsAtom)
 
     const buttonStyle = useMemo(() => {
         return selected.length < 5 ? 'bg-gray-100 text-gray-400' : 'bg-black text-white cursor-pointer'
@@ -49,6 +51,7 @@ const SelectTopic = () => {
 
         try {
             await updateUserTopics(selected);
+            setUserTopics((prev) => [...prev, ...selected])
             navigate('/home')
         } catch (error) {
             console.error('Failed to update user topics!')
@@ -56,6 +59,8 @@ const SelectTopic = () => {
             setLoading(false)
         }
     }
+
+    if(!state) return;
 
     if(loading) return <Loading />
 
