@@ -4,7 +4,8 @@ import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import bcrypt from 'bcryptjs'
 import { signinInput, signupInput } from "@lagnajit09/medium-zod"
-
+import { load } from "cheerio";
+import axios from "axios";
 
 // Create the main Hono app
 export const userRouter = new Hono<{
@@ -170,5 +171,55 @@ userRouter.get('/:userId/topics', async (c) => {
       console.error(error);
       c.status(500)
       c.json({ message: 'Internal server error' });
+    }
+  });
+
+
+  //api route to handle requests
+userRouter.get("/fetchurl", async (c) => {
+    try {
+      //get url to generate preview, the url will be based as a query param.
+      const url = c.req.query('url');
+      console.log(c)
+
+      if(!url) {
+        c.status(404);
+        return c.json("URL not found!")
+      }
+
+      /*request url html document*/
+      const { data } = await axios.get(url);
+      //load html document in cheerio
+      const $ = load(data);
+  
+      /*function to get needed values from meta tags to generate preview*/
+      const getMetaTag = (name: any) => {
+        return (
+          $(`meta[name=${name}]`).attr("content") ||
+          $(`meta[propety="twitter${name}"]`).attr("content") ||
+          $(`meta[property="og:${name}"]`).attr("content")
+        );
+      };
+  
+      /*Fetch values into an object */
+      const preview = {
+        success: 1,
+        link: url,
+        meta:{
+            title: $("title").first().text(),
+            description: getMetaTag("description"),
+            image: getMetaTag("image"),
+            author: getMetaTag("author"),
+            url,
+        },
+      };
+  
+      //Send object as response
+      return c.json(preview);
+    } catch (error) {
+        c.status(500);
+        c.json(
+          "Something went wrong, please check your internet connection and also the url you provided"
+        );
     }
   });

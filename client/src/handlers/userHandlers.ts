@@ -92,3 +92,22 @@ export const fetchRecommendedTopics = async () => {
         console.error('Failed to fetch recommended topics!')
     }
 }
+
+
+//method to fetch blogs for home page
+export const fetchHomeBlogs = async () => {
+
+    try {
+        const response = await fetch(`${SERVER}/api/v1/blog/post/followed-posts`, {
+            headers: {
+                Authorization: `Bearer ${jwt}`
+            }
+        })
+
+        const data = await response.json();
+
+        return data;
+    } catch (error) {
+        console.error('Failed to fetch blogs!')
+    }
+}

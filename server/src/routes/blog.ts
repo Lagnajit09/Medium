@@ -3,7 +3,7 @@ import {  verify } from 'hono/jwt'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { createPostInput, updatePostInput } from "@lagnajit09/medium-zod"
-import { bodyLimit } from 'hono/body-limit';
+
 
 // Create the main Hono app
 export const blogRouter = new Hono<{
@@ -643,5 +643,4 @@ blogRouter.get('/:userId/recommended-topics', async (c) => {
 
 
 
-//user follow topic
 //firebase storage integration for image

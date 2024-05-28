@@ -3,6 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 import { blogsAtom, userTopicsAtom } from '../store/userAtom'
 import { Skeleton } from '@mui/material';
 import { PiBookmarksSimpleLight } from "react-icons/pi";
+import { fetchHomeBlogs } from '../handlers/userHandlers';
 
 const Blogs = () => {
   const userTopics = useRecoilValue(userTopicsAtom);
@@ -13,6 +14,9 @@ const Blogs = () => {
 
     const fetchBlogs = async () => {
       try {
+        const fetchedBlogs = await fetchHomeBlogs();
+        setBlogs(fetchedBlogs);
+        console.log(fetchedBlogs)
         setLoading(true)
       } catch (error) {
         setLoading(true)

@@ -39,7 +39,7 @@ const HomeRight = () => {
 
             if(!parentDiv) return;
 
-            if (scrollPosition >= viewportHeight * 0.1) {
+            if (scrollPosition >= viewportHeight * 0.08) {
                 parentDiv.style.top = '0';
             } else {
                 parentDiv.style.top = '';
@@ -54,7 +54,7 @@ const HomeRight = () => {
     }, []);
 
   return (
-    <div id='recommended-topics' className='flex w-[22%] border-l-2 px-5 fixed right-32 bg-white h-[100vh]'>
+    <div id='recommended-topics' className='flex w-[22%] border-l-2 px-5 fixed right-32 h-[100vh]'>
         <div className='mt-10'>
             <p className=' font-semibold text-base text-gray-700'>Recommended Topics</p>
             <div className=' flex flex-wrap items-center justify-start mt-3'>

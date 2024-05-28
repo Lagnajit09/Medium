@@ -11,6 +11,7 @@ import { RecoilRoot, useRecoilState } from 'recoil'
 import { authUserAtom } from './store/authAtom'
 import { loadingAtom } from './store/loader'
 import SelectTopic from './pages/selectTopic'
+import NewBlog from './pages/newBlog'
 
 function App() {
   const [authUser, setAuthUser] = useRecoilState(authUserAtom)
@@ -65,6 +66,7 @@ function App() {
             <>
               <Route path="/home" element={<Home />} />
               <Route path="/get-started/topics" element={<SelectTopic />} />
+              <Route path="/new-story" element={<NewBlog />} />
             </> }
             <Route path="/blog/:id" element={<Blog />} />
           </Routes>}

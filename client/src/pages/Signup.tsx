@@ -88,7 +88,7 @@ const Signup = ({setShowSignUp, setShowSignIn, setAuthenticated}: signupPropsTyp
           title="Sign Up" 
           type="submit" 
           onClick={(e)=>signupHandler(e)} 
-          buttonStyles="mt-3 w-[40%] border-2 border-black text-white" 
+          buttonStyles="mt-3 w-[40%] border-2 border-black text-white rounded-md" 
         />
 
         
@@ -100,7 +100,7 @@ const Signup = ({setShowSignUp, setShowSignIn, setAuthenticated}: signupPropsTyp
           title="Continue with Google" 
           type="button" 
           onClick={googleAuth} 
-          buttonStyles="bg-white text-black border-2 border-black" 
+          buttonStyles="bg-white text-black border-2 border-black rounded-md" 
           icon={<FaGoogle />} 
         />
       </form>

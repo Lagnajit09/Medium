@@ -78,7 +78,7 @@ const Signin = ({setShowSignIn, setShowSignUp, setAuthenticated}: signinPropsTyp
           title="Sign In" 
           type="submit" 
           onClick={signinHandler} 
-          buttonStyles="mt-3 w-[40%] border-2 border-black text-white" 
+          buttonStyles="mt-3 w-[40%] border-2 border-black text-white rounded-md" 
         />
 
         <span className=' text-sm font-light text-gray-500'>Don't have an account? <span className=' text-base font-bold  text-black cursor-pointer' onClick={() => {setShowSignIn(false); setShowSignUp(true)}}>Create One.</span></span>
@@ -89,7 +89,7 @@ const Signin = ({setShowSignIn, setShowSignUp, setAuthenticated}: signinPropsTyp
           title="Continue with Google" 
           type="button" 
           onClick={googleAuth} 
-          buttonStyles="bg-white text-black border-2 border-black" 
+          buttonStyles="bg-white text-black border-2 border-black rounded-md" 
           icon={<FaGoogle />} 
         />
       </form>

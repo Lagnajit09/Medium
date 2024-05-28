@@ -12,7 +12,7 @@ const Button: React.FC<ButtonProps> = ({ title, type = 'button', onClick, button
   return (
     <button 
       type={type} 
-      className={`px-3 py-1 bg-black font-bold text-lg rounded-md flex items-center justify-center gap-2 ${buttonStyles}`} 
+      className={`px-3 py-1 bg-black font-bold text-lg flex items-center justify-center gap-2 ${buttonStyles}`} 
       onClick={onClick}
     >
       {icon && <span>{icon}</span>}
