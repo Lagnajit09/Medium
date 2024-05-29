@@ -1,14 +1,22 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import EditorJS, { OutputData } from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import Paragraph from '@editorjs/paragraph';
 import Image from '@editorjs/image';
 import Code from '@editorjs/code';
-import LinkTool from '@editorjs/link';import { SERVER } from '../config';
-;
+import LinkTool from '@editorjs/link';
+import { SERVER } from '../config';
+import { useSetRecoilState } from 'recoil';
+import { editorInstanceAtom } from '../store/userAtom';
 
-const Editor: React.FC = () => {
+interface editorProps {
+  handleSave: Function;
+}
+
+const Editor = ({handleSave}: editorProps) => {
   const editorInstance = useRef<EditorJS>();
+  const [title, setTitle] = useState('');
+  const setEditorAtom = useSetRecoilState(editorInstanceAtom)
 
   useEffect(() => {
     if (!editorInstance.current) {
@@ -77,25 +85,46 @@ const Editor: React.FC = () => {
             }
           }
         },
-      });
+        });
+        
+      }
+  
+      return () => {
+        editorInstance.current?.destroy();
+        editorInstance.current = undefined;
+      };
+    }, []);
+
+    useEffect(() => {
+        setEditorAtom(() => saveEditorData);
+    }, [setEditorAtom])
+
+
+    const updateBtnText = () => {
+      const saveBtn = document.getElementById("saveBlogButton");
+        if(saveBtn)
+          saveBtn.innerHTML = 'Save'
     }
 
-    return () => {
-      editorInstance.current?.destroy();
-      editorInstance.current = undefined;
-    };
-  }, []);
+    const saveEditorData = async () => {
+      const data = await editorInstance?.current?.save();
+      console.log(data);
+      return {title, data};
+    }
 
-  const handleSave = async () => {
-    const savedData = await editorInstance.current?.save();
-    console.log('Saved data:', savedData);
-    // You can send savedData to your server here
-  };
 
   return (
     <div className='w-[80%] mx-auto pt-10 overflow-hidden'>
-        <textarea placeholder='Title' className='min-w-[50%] max-w-[80%] border-b-2 font-bold text-5xl p-1 outline-none text-gray-800 ml-[20%] resize-none scrollbar-hide' />
-      <div id="editorjs" className=" my-4 p-4 text-gray-800"></div>
+        <textarea 
+            placeholder='Title' 
+            className='min-w-[50%] max-w-[80%] border-b-2 font-bold text-5xl p-1 outline-none text-gray-800 ml-[20%] resize-none scrollbar-hide' 
+            onChange={
+                (e) => {
+                  setTitle(e.target.value); 
+                  updateBtnText();
+                }} 
+          />
+      <div id="editorjs" className=" my-4 p-4 text-gray-800" onChange={updateBtnText}></div>
     </div>
   );
 };

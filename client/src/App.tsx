@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import  Blog  from './pages/Blog'
 import Navbar from './components/Navbar'
 import Landing from './pages/landing'
 import Footer from './components/Footer'
@@ -68,7 +67,6 @@ function App() {
               <Route path="/get-started/topics" element={<SelectTopic />} />
               <Route path="/new-story" element={<NewBlog />} />
             </> }
-            <Route path="/blog/:id" element={<Blog />} />
           </Routes>}
         {!loading && <Footer />}
     </>

@@ -111,3 +111,24 @@ export const fetchHomeBlogs = async () => {
         console.error('Failed to fetch blogs!')
     }
 }
+
+
+//method to save user blog
+export const saveUserBlog = async (postData: any) => {
+    try {
+        const response = await fetch(`${SERVER}/api/v1/blog/post/save`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${jwt}`
+            },
+            body: JSON.stringify({title:postData.title, content:JSON.stringify(postData)}),
+        })
+
+        const data = await response.json();
+        console.log(data)
+        return data;
+    } catch (error) {
+        console.error('Failed to save data!')
+    }
+}

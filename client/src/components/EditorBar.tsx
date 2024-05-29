@@ -1,38 +1,38 @@
-import React, { useEffect, useRef, useState } from 'react'
 import Logo from "../assets/logo.svg"
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { authUserAtom } from '../store/authAtom'
-import { Avatar } from '@mui/material'
+import { Avatar, CircularProgress } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import Button from './Button'
-import { FiMoreHorizontal } from "react-icons/fi";
+import { LuShare } from "react-icons/lu";
+import { editorInstanceAtom, userBlogsAtom } from "../store/userAtom"
+import { useState } from "react"
+import { saveUserBlog } from "../handlers/userHandlers"
+
 
 const EditorBar = () => {
     const authUser = useRecoilValue(authUserAtom);
-    const [showDropdown, setShowDropdown] = useState(false)
-
-    const optionsRef = useRef<HTMLDivElement>(null);
-
-    const handleClickOutside = (event: MouseEvent) => {
-        if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
-            setShowDropdown(false);
-        }
-    };
-
-    const handleScroll = () => {
-        setShowDropdown(false);
-    };
-
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
+    const editorAtom = useRecoilValue(editorInstanceAtom)
+    const [loading, setLoading] = useState(false)
+    const [userBlogs, setUserBlogs] = useRecoilState(userBlogsAtom)
+    const [buttonTitle, setButtonTitle] = useState('Save');
 
     const handlePublish = async () => {}
+
+    const handleSave = async () => {
+        setLoading(true)
+        try {
+            const data = await editorAtom();
+            console.log(data)
+            const savedPost = await saveUserBlog(data);
+            setUserBlogs((prev):any => [...prev, savedPost])
+            setButtonTitle('Saved')
+        } catch (error) {
+            console.log('Error while saving blog!')
+        } finally{
+            setLoading(false)
+        }
+    }
 
   return (
     <div className=' w-[70%] mx-auto p-3 flex justify-between items-center relative'>
@@ -41,16 +41,15 @@ const EditorBar = () => {
             <p className=' text-gray-700'>{(authUser as { email: string }).email}</p>
         </div>
         <div className=' flex gap-6 items-center'>
-            <Button title='Publish' onClick={handlePublish} buttonStyles=' bg-green-600 text-white rounded-full text-sm cursor-pointer' />
+            <Button title='Publish' onClick={handlePublish} buttonStyles=' bg-green-600 text-white border-2 border-green-600 rounded-full text-sm cursor-pointer' />
 
-            <div ref={optionsRef}>
-                <FiMoreHorizontal className=' w-6 h-6 cursor-pointer' onClick={() => setShowDropdown(!showDropdown)} />
-                {showDropdown && <div className=' p-3 pr-8 flex flex-col border-2 rounded-md border-gray-100 gap-2 absolute top-14 right-12 shadow-sm text-sm  text-gray-700' >
-                    <span className=' cursor-pointer hover:text-black'>Save</span>
-                    <span className=' cursor-pointer hover:text-black'>Share</span>
-                    <span className=' cursor-pointer hover:text-black'>Help</span>
-                </div>}
-            </div>
+            {loading ?
+                <CircularProgress /> 
+                : 
+                <Button id="saveBlogButton" title={buttonTitle} onClick={handleSave} buttonStyles=' bg-white text-gray-600 border-2 border-gray-600 rounded-full text-sm cursor-pointer' />
+            }
+
+            <LuShare className=' w-5 h-5 cursor-pointer' />
 
             <Avatar
                 className='cursor-pointer font-semibold'

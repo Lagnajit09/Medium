@@ -35,8 +35,8 @@ blogRouter.use('/*', async (c, next) => {
 })
 
 
-//Add a new blog
-blogRouter.post("/post", async (c) => {
+//Add a new blog (publish)
+blogRouter.post("/post/publish", async (c) => {
     try {
         const userId = c.get('userId');
 
@@ -62,7 +62,10 @@ blogRouter.post("/post", async (c) => {
                 title: body.title,
                 content: body.content,
                 authorId: userId,
+                published: true,
                 topicId: Number(body.topic)
+            }, include: {
+                topic: true
             }
         })
 
@@ -70,9 +73,51 @@ blogRouter.post("/post", async (c) => {
     } catch(error) {
         console.error(error)
         c.status(500);
-        return c.json({error : 'Internal server error'})
+        return c.json({error : 'Error while publishing post!'})
     }
     
+})
+
+
+//Add a new blog (save)
+blogRouter.post("/post/save", async (c) => {
+    try {
+        const userId = c.get('userId');
+
+        const prisma = new PrismaClient({
+            datasourceUrl: c.env.DATABASE_URL
+        }).$extends(withAccelerate());
+
+        const body = await c.req.json();
+
+        const { success } = createPostInput.safeParse(body);
+        if (!success) {
+            c.status(400);
+            return c.json({ error: "invalid input" });
+        }
+
+        if(!body.title && !body.content) {
+            c.status(410);
+            return c.json({error: "No data to save."})
+        }
+
+        const blog = await prisma.post.create({
+            data: {
+                title: body.title,
+                content: body.content,
+                authorId: userId,
+                topicId: 70000
+            }, include: {
+                topic: true
+            }
+        })
+
+        return c.json(blog)
+    } catch(error) {
+        console.error(error)
+        c.status(500);
+        return c.json({error : 'Error while saving post!'})
+    }
 })
 
 
@@ -160,6 +205,9 @@ blogRouter.get('/post/user-posts', async (c) => {
         const posts = await prisma.post.findMany({
             where: {
                 authorId: body.userId
+            },
+            include: {
+                topic: true
             }
         });
         console.log(posts);
@@ -184,8 +232,18 @@ blogRouter.get('/post/followed-posts', async (c) => {
     try {
         // Find the user by userId and include their followed topics
         const user = await prisma.user.findUnique({
-          where: { id: userId },
-          include: { topics: { include: { posts: true } } },
+            where: { id: userId },
+            include: {
+                topics: {
+                    include: {
+                        posts: {
+                            where: {
+                                published: true
+                            }
+                        }
+                    }
+                }
+            }
         });
     
         // Extract posts from user's followed topics

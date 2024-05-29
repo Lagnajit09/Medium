@@ -1,3 +1,4 @@
+import { OutputData } from "@editorjs/editorjs";
 import { atom } from "recoil";
 
 export const blogsAtom = atom({
@@ -15,8 +16,16 @@ export const userTopicsAtom = atom({
   default: [],
 });
 
-export const savedPostsAtom = atom({
-  key: "savedPostsAtom",
-  default: [],
-});
 
+
+interface SaveEditorDataResult {
+  title: string;
+  data: OutputData | undefined;
+}
+
+export const editorInstanceAtom = atom<() => Promise<SaveEditorDataResult | undefined>>({
+  key: 'editorInstanceAtom',
+  default: async () => {
+    return undefined;
+  },
+});
