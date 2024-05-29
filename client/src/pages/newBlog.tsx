@@ -1,18 +1,20 @@
-import React from 'react'
 import EditorBar from '../components/EditorBar'
 import Editor from '../components/Editor'
-import { saveUserBlog } from '../handlers/userHandlers'
+import { useParams } from 'react-router-dom'
+import { useEffect } from 'react';
 
 const NewBlog = () => {
 
-    const handleSaveBlog = async () => {
-        
-    }
+  const {id} = useParams();
+
+  useEffect(() => {
+
+  }, [id])
     
   return (
     <div className='w-screen h-screen absolute z-50 top-0 bg-white overflow-x-hidden'>
-        <EditorBar />
-        <Editor handleSave={handleSaveBlog} />
+        <EditorBar update={false} id={0} />
+        <Editor data={{blocks: []}} fetchedTitle='' />
     </div>
   )
 }

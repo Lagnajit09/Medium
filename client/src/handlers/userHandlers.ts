@@ -125,6 +125,8 @@ export const saveUserBlog = async (postData: any) => {
             body: JSON.stringify({title:postData.title, content:JSON.stringify(postData)}),
         })
 
+        if(response.status === 410) return Error;
+
         const data = await response.json();
         console.log(data)
         return data;
@@ -132,3 +134,50 @@ export const saveUserBlog = async (postData: any) => {
         console.error('Failed to save data!')
     }
 }
+
+
+//method to save user blog
+export const updateUserBlog = async (postData: any, id: number, topic: number) => {
+    try {
+        const response = await fetch(`${SERVER}/api/v1/blog/post`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${jwt}`
+            },
+            body: JSON.stringify({
+                title:postData.title, 
+                content:JSON.stringify(postData), 
+                userId, 
+                id, 
+                topic 
+            }),
+        })
+
+        if(response.status === 410) return Error;
+
+        const data = await response.json();
+        console.log(data)
+        return data;
+    } catch (error) {
+        console.error('Failed to save data!')
+    }
+}
+
+
+//fetch a blog by id
+export const fetchBlogByID = async (id:number) => {
+    try {
+        const response = await fetch(`${SERVER}/api/v1/blog/post/${id}`, {
+            headers: {
+                Authorization: `Bearer ${jwt}`
+            }
+        })
+
+        const data = await response.json();
+
+        return data;
+    } catch (error) {
+        console.error('Failed to fetch blogs!')
+    }
+} 

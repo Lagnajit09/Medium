@@ -69,6 +69,8 @@ blogRouter.post("/post/publish", async (c) => {
             }
         })
 
+        blog.content = JSON.parse(blog.content)
+
         return c.json(blog)
     } catch(error) {
         console.error(error)
@@ -112,6 +114,8 @@ blogRouter.post("/post/save", async (c) => {
             }
         })
 
+        blog.content = JSON.parse(blog.content)
+
         return c.json(blog)
     } catch(error) {
         console.error(error)
@@ -147,7 +151,7 @@ blogRouter.put('/post', async (c) => {
             return c.json({error: "unauthorized access!"})
         }
 
-	    await prisma.post.update({
+	    const post = await prisma.post.update({
 		    where: {
 			    id: body.id,
 			    authorId: userId
@@ -156,10 +160,12 @@ blogRouter.put('/post', async (c) => {
 			    title: body.title,
 			    content: body.content,
                 topicId: Number(body.topic)
-		    }
+		    }, include: {
+                topic: true
+            }
 	    });
 
-	    return c.text('updated post');
+	    return c.json(post);
 
     } catch(error) {
         c.status(500);
@@ -273,8 +279,17 @@ blogRouter.get('/post/:id', async (c) => {
         const post = await prisma.post.findUnique({
             where: {
                 id: Number(id)
+            }, include : {
+                topic: true
             }
         });
+
+        if(!post) {
+            c.status(404);
+            return c.json({message: "No post found!"})
+        }
+
+        post.content = JSON.parse(post.content)
     
         return c.json(post);
     } catch(error) {

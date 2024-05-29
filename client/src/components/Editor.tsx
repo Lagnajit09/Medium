@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import EditorJS, { OutputData } from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import Paragraph from '@editorjs/paragraph';
@@ -9,13 +9,14 @@ import { SERVER } from '../config';
 import { useSetRecoilState } from 'recoil';
 import { editorInstanceAtom } from '../store/userAtom';
 
-interface editorProps {
-  handleSave: Function;
+interface EditorProps {
+  data?: OutputData | undefined;
+  fetchedTitle: string;
 }
 
-const Editor = ({handleSave}: editorProps) => {
+const Editor = ({data, fetchedTitle}:EditorProps) => {
   const editorInstance = useRef<EditorJS>();
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(fetchedTitle);
   const setEditorAtom = useSetRecoilState(editorInstanceAtom)
 
   useEffect(() => {
@@ -85,6 +86,8 @@ const Editor = ({handleSave}: editorProps) => {
             }
           }
         },
+        data: data,
+        onChange: updateBtnText
         });
         
       }
@@ -97,7 +100,7 @@ const Editor = ({handleSave}: editorProps) => {
 
     useEffect(() => {
         setEditorAtom(() => saveEditorData);
-    }, [setEditorAtom])
+    }, [setEditorAtom, title])
 
 
     const updateBtnText = () => {
@@ -106,9 +109,12 @@ const Editor = ({handleSave}: editorProps) => {
           saveBtn.innerHTML = 'Save'
     }
 
+    // useEffect(() => {
+    //   document.getElementById('editorjs')?.addEventListener('change', updateBtnText)
+    // }, [title, editorInstance])
+
     const saveEditorData = async () => {
       const data = await editorInstance?.current?.save();
-      console.log(data);
       return {title, data};
     }
 
@@ -123,8 +129,8 @@ const Editor = ({handleSave}: editorProps) => {
                   setTitle(e.target.value); 
                   updateBtnText();
                 }} 
-          />
-      <div id="editorjs" className=" my-4 p-4 text-gray-800" onChange={updateBtnText}></div>
+          >{title}</textarea>
+      <div id="editorjs" className=" my-4 p-4 text-gray-800"></div>
     </div>
   );
 };
