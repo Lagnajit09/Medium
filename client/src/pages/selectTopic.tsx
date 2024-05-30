@@ -3,15 +3,18 @@ import logo from '../assets/logo.svg'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { PiPlus } from "react-icons/pi";
 import { PiCheck } from "react-icons/pi";
-import { updateUserTopics } from '../handlers/userHandlers';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { fetchAllTopics, updateUserTopics } from '../handlers/userHandlers';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { loadingAtom } from '../store/loader';
 import Loading from '../components/Loading';
 import { userTopicsAtom } from '../store/userAtom';
+import { authUserAtom } from '../store/authAtom';
 
 const Topic = (props: {item:{id:number, name: string, mainTopicId: number}, key:number, selected: any, setSelected: Function}) => {
 
     const [clicked, setClicked] = useState(false);
+
+    if(props.item.id===70000) return
 
     useEffect(() => {
         if(clicked) {
@@ -36,7 +39,8 @@ const Topic = (props: {item:{id:number, name: string, mainTopicId: number}, key:
 }
 
 const SelectTopic = () => {
-    const {state} = useLocation();
+    const authUser = useRecoilValue(authUserAtom)
+    const [allTopics, setAllTopics] = useState([]);
     const [selected, setSelected] = useState([]);
     const [loading, setLoading] = useRecoilState(loadingAtom)
     const navigate = useNavigate();
@@ -60,12 +64,30 @@ const SelectTopic = () => {
         }
     }
 
-    if(!state) return;
+    useEffect(() => {
+        const getAllTopics = async () => {
+
+            try {
+                const fetchedAllTopics = await fetchAllTopics();
+                if(!fetchedAllTopics) throw Error;
+
+                setAllTopics(fetchedAllTopics)
+
+            } catch (error) {
+                console.log(error)
+                console.log("Error while fetching topics!")
+            }
+
+        }
+        getAllTopics()
+    }, [authUser,localStorage])
+
+    if(!allTopics) return;
 
     if(loading) return <Loading />
 
   return (
-    <div className=' flex items-start flex-col w-full h-screen absolute top-0 bg-white p-5'>
+    <div className=' flex items-start flex-col w-full h-screen absolute top-0 bg-white p-5 z-50'>
         <div className='mx-auto flex items-center flex-col max-w-[50vw]'>
             <div className="flex gap-2 items-center">
                 <img className='w-18 h-14' src={logo} alt='' />
@@ -77,8 +99,8 @@ const SelectTopic = () => {
                 <p className='my-3'>Choose five or more.</p>
             </div>
 
-            <div className=' flex flex-wrap items-center justify-center'>
-                {state.map((item:{id:number, name: string, mainTopicId: number}, index:number) => {
+            <div className=' flex flex-wrap items-center justify-center mb-32'>
+                {allTopics.map((item:{id:number, name: string, mainTopicId: number}, index:number) => {
                     return <Topic item={item} key={index} selected={selected} setSelected={setSelected} />
                 })}
             </div>

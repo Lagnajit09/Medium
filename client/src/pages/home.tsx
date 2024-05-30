@@ -14,21 +14,19 @@ const home = () => {
     const [userTopics, setUserTopics] = useRecoilState(userTopicsAtom)
     const navigate = useNavigate()
 
-    console.log(authUser)
+    // useEffect(() => {
+    //     const fetchUser = async () => {
+    //         const user = await getUserData();
+    //         const isNew = isNewUser(user);
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            const user = await getUserData();
-            const isNew = isNewUser(user);
-
-            if(isNew) {
-                await storeUserData(user, setAuthUser)
-            }
-        }
-        fetchUser()
-        fetchUserSession()
-        if(authUser) logInUser(authUser, setAuthUser)
-    }, []);
+    //         if(isNew) {
+    //             await storeUserData(user, setAuthUser)
+    //         }
+    //     }
+    //     fetchUser()
+    //     fetchUserSession()
+    //     if(authUser) logInUser(authUser, setAuthUser)
+    // }, [authUser]);
 
     //useEffect to fetch user's topics
     useEffect(() => {
@@ -47,7 +45,9 @@ const home = () => {
       }
       checkUserTopics()
       
-    }, [])
+    }, [authUser])
+
+    if(!localStorage.getItem('medium-userId')) return;
 
 
   return (

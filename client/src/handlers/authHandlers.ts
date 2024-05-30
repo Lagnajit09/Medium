@@ -1,14 +1,14 @@
-import { createSessionWithEmail, deleteSessionById } from "../appwrite";
+import { deleteSessionById, handleSignup } from "../appwrite";
 import { SERVER } from "../config";
 
-export const storeUserData = async (user: any, setAuthUser: Function) => {
+export const storeUserData = async (email: string, password: string, name: string, setAuthUser: Function) => {
     try {
         const response = await fetch(`${SERVER}/api/v1/user/signup`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({email: user.email, password: user.password || '', name: user.name}),
+            body: JSON.stringify({email: email, password: password, name: name}),
         });
         
         if(response.status === 405) {
@@ -17,26 +17,29 @@ export const storeUserData = async (user: any, setAuthUser: Function) => {
         }
 
         const data = await response.json();
-
         console.log(data)
+        setAuthUser(data)
 
-        setAuthUser(data.user);
+        await handleSignup(data.user.id, email, password, name)
+
         localStorage.setItem('medium-token', data.jwt);
         localStorage.setItem('medium-userId', data.user.id);
+
+        return data;
 
     } catch (error) {
         console.error('Error while signing up!')
     }
 }
 
-export const logInUser = async (user: any, setAuthUser: Function) => {
+export const logInUser = async (email:string, password:string) => {
     try {
         const response = await fetch(`${SERVER}/api/v1/user/signin`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({email: user.email, password: user.password || ''}),
+            body: JSON.stringify({email: email, password: password}),
         })
         if(response.status === 405) {
             console.log("User not found!");
@@ -46,20 +49,33 @@ export const logInUser = async (user: any, setAuthUser: Function) => {
         const data = await response.json();
 
         console.log(data)
-
-        setAuthUser(data.user);
-        localStorage.setItem('medium-token', data.jwt);
-        localStorage.setItem('medium-userId', data.user.id);
+        return data;
 
     } catch (error) {
         console.error('Error while signing in!')
     }
   }
 
-export const logOutHandler = (setAuthUser:Function, setAuthenticated: Function) => {
+export const logOutHandler = (setAuthUser:Function) => {
     localStorage.removeItem('medium-token');
     localStorage.removeItem('medium-userId');
     setAuthUser({});
-    setAuthenticated(false)
     deleteSessionById();
 } 
+
+
+export const getUserById = async (userId: string) => {
+    const id = localStorage.getItem('medium-userId')
+    try {
+        const response = await fetch(`${SERVER}/api/v1/user/${id}`);
+
+        if(response.status === 404) throw Error;
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        console.error("User doesn't exist!")
+        return {}
+    }
+}

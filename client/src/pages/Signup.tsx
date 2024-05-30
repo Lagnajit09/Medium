@@ -8,6 +8,7 @@ import { authUserAtom } from '../store/authAtom.ts';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { loadingAtom } from '../store/loader.ts';
 import Loading from '../components/Loading.tsx';
+import { useNavigate } from 'react-router-dom';
 
 interface signupPropsTypes {
   setShowSignUp: Function;
@@ -20,7 +21,8 @@ const Signup = ({setShowSignUp, setShowSignIn, setAuthenticated}: signupPropsTyp
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const setAuthUser = useSetRecoilState(authUserAtom);
-  const [loading, setLoading] = useRecoilState(loadingAtom)
+  const [loading, setLoading] = useRecoilState(loadingAtom);
+  const navigate = useNavigate()
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -42,9 +44,10 @@ const Signup = ({setShowSignUp, setShowSignIn, setAuthenticated}: signupPropsTyp
     setLoading(true);
     try {
       event.preventDefault();
-      const user = await handleSignup(email, password, username);
-      await storeUserData(user, setAuthUser);
+      const user = await storeUserData(email, password, username, setAuthUser);
+      if(!user) throw Error;
       setAuthenticated(true);
+      navigate('/get-started/topics')
     } catch (error) {
       console.error("Error while signing up.")
     } finally {
@@ -52,6 +55,8 @@ const Signup = ({setShowSignUp, setShowSignIn, setAuthenticated}: signupPropsTyp
     }
 
   };
+
+  console.log()
 
   if(loading) return <Loading />
 

@@ -2,12 +2,12 @@ import { OutputData } from "@editorjs/editorjs";
 import { atom } from "recoil";
 
 export const blogsAtom = atom({
-  key: "userPostsAtom",
+  key: "blogsAtom",
   default: [],
 });
 
 export const userBlogsAtom = atom({
-  key: "userPostsAtom",
+  key: "userBlogsAtom",
   default: [],
 });
 

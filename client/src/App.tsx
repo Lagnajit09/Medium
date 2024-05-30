@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Landing from './pages/landing'
 import Footer from './components/Footer'
@@ -12,6 +12,7 @@ import { loadingAtom } from './store/loader'
 import SelectTopic from './pages/selectTopic'
 import NewBlog from './pages/newBlog'
 import EditBlog from './pages/editBlog'
+import { getUserById } from './handlers/authHandlers'
 
 function App() {
   const [authUser, setAuthUser] = useRecoilState(authUserAtom)
@@ -19,25 +20,21 @@ function App() {
   const [showSignUp, setShowSignUp] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useRecoilState(loadingAtom);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const isAuthenticated = async () => {
 
       setLoading(true);
-      const sessionId = localStorage.getItem('sessionId')
+      const userId = localStorage.getItem('medium-userId')
       try {
-        if (sessionId) {
-          const { userSession, user } = await fetchUserSession();
-          setAuthenticated(true);
-          if (user) {
-            setAuthUser(user);
-          }
-        } else {
-          setAuthenticated(false);
+        if(userId) {
+          const data = await getUserById(userId);
+          console.log(data)
+          setAuthUser(data);
         }
       } catch (error) {
-        console.error('Error while fetching user session!');
-        setAuthenticated(false);
+        console.error('Error while finding user!');
       } finally {
         setLoading(false);
       }
@@ -53,22 +50,18 @@ function App() {
 
   return (
     <>
-        {!loading && <Navbar setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} authenticated={authenticated} setAuthenticated={setAuthenticated} />}
-          {!loading && <Routes>
-             <Route path="/" 
-            element={
-              !authenticated ?
+        {!loading && 
+        <Navbar setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} />
+        }
+          {!loading && 
+          <Routes>
+             <Route path="/" element={
               <Landing showSignIn={showSignIn} showSignUp={showSignUp} setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} setAuthenticated={setAuthenticated} /> 
-              : 
-              <Home />
-            } />
-            {authenticated && 
-            <>
+              } />
               <Route path="/home" element={<Home />} />
               <Route path="/get-started/topics" element={<SelectTopic />} />
               <Route path="/new-story" element={<NewBlog />} />
               <Route path="/blog/:id/edit" element={<EditBlog />} />
-            </> }
           </Routes>}
         {!loading && <Footer />}
     </>

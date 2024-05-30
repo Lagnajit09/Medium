@@ -53,12 +53,14 @@ const HomeRight = () => {
         };
     }, []);
 
+    if(!recommended) return;
+
   return (
     <div id='recommended-topics' className='flex w-[22%] border-l-2 px-5 fixed right-32 h-[100vh]'>
         <div className='mt-10'>
             <p className=' font-semibold text-base text-gray-700'>Recommended Topics</p>
             <div className=' flex flex-wrap items-center justify-start mt-3'>
-                {recommended.map((rt, index) => <Recommended topic={rt} key={index} loading={loading} />)}
+                {!loading && recommended.map((rt, index) => <Recommended topic={rt} key={index} loading={loading} />)}
             </div>
         </div>
     </div>

@@ -87,7 +87,7 @@ const EditorBar = ({update, id}: EditorBarProps) => {
     <div className=' w-[70%] mx-auto p-3 flex justify-between items-center relative'>
         <div className=' flex gap-4 items-center'>
             <img src={Logo} alt='logo.svg' className=' w-12 h-12' />
-            <p className=' text-gray-700'>{(authUser as { email: string }).email}</p>
+            <p className=' text-gray-700'>{(authUser as { name: string }).name}</p>
         </div>
         <div className=' flex gap-6 items-center'>
             <Button title='Publish' onClick={handlePublish} buttonStyles=' bg-green-600 text-white border-2 border-green-600 rounded-full text-sm cursor-pointer' />

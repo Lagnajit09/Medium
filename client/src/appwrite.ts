@@ -94,12 +94,13 @@ export const deleteSessionById = async () => {
 
 // Signup handler
 export const handleSignup = async (
+  id: string,
   email: string,
   password: string,
   name: string
 ): Promise<Models.User<Models.Preferences> | undefined> => {
   try {
-    await account.create('unique()', email, password, name);
+    await account.create(id, email, password, name);
     const user = await handleLogin(email, password);
     return user;
   } catch (error) {

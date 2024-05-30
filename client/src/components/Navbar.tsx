@@ -11,20 +11,25 @@ import { GoBell } from "react-icons/go";
 // import { FaRegBookmark } from "react-icons/fa6";
 // import { FiHelpCircle } from "react-icons/fi";
 import { logOutHandler } from '../handlers/authHandlers';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface NavbarPropsTypes {
     setShowSignUp: Function;
     setShowSignIn: Function;
-    setAuthenticated: Function;
-    authenticated: boolean;
 }
 
-const Navbar = ({ setShowSignIn, setShowSignUp, authenticated, setAuthenticated }: NavbarPropsTypes) => {
+const Navbar = ({ setShowSignIn, setShowSignUp }: NavbarPropsTypes) => {
     const navigate = useNavigate();
     const [authUser, setAuthUser] = useRecoilState(authUserAtom)
     const [showDropdown, setShowDropdown] = useState(false)
     const optionsRef = useRef<HTMLDivElement>(null);
+
+    console.log(authUser)
+
+    const authenticated = useMemo(() => {
+        if(localStorage.getItem('medium-userId'))
+            return true
+    }, [authUser])
 
     const handleClickOutside = (event: MouseEvent) => {
         if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
@@ -86,7 +91,7 @@ const Navbar = ({ setShowSignIn, setShowSignUp, authenticated, setAuthenticated 
                 <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black'><span>Settings</span></div>
                 <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black'><span>Help</span></div>
                 <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black'><span>Membership</span></div>
-                <div className='px-10 py-1 w-full cursor-pointer text-red-600 hover:text-black' onClick={() => { logOutHandler(setAuthUser, setAuthenticated); navigate('/') }}><span>Sign Out</span></div>
+                <div className='px-10 py-1 w-full cursor-pointer text-red-600 hover:text-red-500' onClick={() => { logOutHandler(setAuthUser); navigate('/') }}><span>Sign Out</span></div>
             </div>}
         </div>
     )

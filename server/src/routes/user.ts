@@ -12,11 +12,16 @@ export const userRouter = new Hono<{
 	Bindings: {
 		DATABASE_URL: string,
 		JWT_SECRET: string,
+	},
+	Variables : {
+		userId: string
 	}
 }>();
 
 
-//roexport utes
+//export routes
+
+//SIGNUP
 userRouter.post('/signup', async (c) => {
 
     const prisma = new PrismaClient({
@@ -62,7 +67,8 @@ userRouter.post('/signup', async (c) => {
             }
         })
     
-        const jwt = await sign({id: user.id}, c.env.JWT_SECRET)
+        const jwt = await sign({id: user.id}, c.env.JWT_SECRET);
+        c.set('userId', user.id as string)
     
         return c.json({jwt, user: user})
     } catch(e) {
@@ -72,6 +78,7 @@ userRouter.post('/signup', async (c) => {
 })
     
     
+//SIGNIN
 userRouter.post('/signin', async (c) => {
         const prisma = new PrismaClient({
             datasourceUrl: c.env?.DATABASE_URL	,
@@ -96,6 +103,8 @@ userRouter.post('/signin', async (c) => {
                 c.status(405);
                 return c.json({ error: "user not found" });
             }
+
+            c.set('userId', user.id as string)
     
             const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
             return c.json({ jwt, user: user  });
@@ -104,6 +113,36 @@ userRouter.post('/signin', async (c) => {
             return c.json({ error: "error while signing in" });
         }
 })
+
+
+//GET USER BY ID
+userRouter.get('/:id', async (c) => {
+
+  const id = c.req.param('id')
+
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env?.DATABASE_URL,
+  }).$extends(withAccelerate())
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id
+      }
+    })
+
+    if(!user) {
+      return c.text('User not found!', 404)
+    }
+
+    return c.json(user)
+  } catch (error) {
+    return c.text('Error while fetching user details!', 500)
+  }
+})
+
+
+
 
 userRouter.post('/user-topics/:id', async (c) => {
 
