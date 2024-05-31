@@ -17,15 +17,15 @@ const home = () => {
     // useEffect(() => {
     //     const fetchUser = async () => {
     //         const user = await getUserData();
+
+    //         if(!user) return;
     //         const isNew = isNewUser(user);
 
     //         if(isNew) {
-    //             await storeUserData(user, setAuthUser)
+    //             await storeUserData(user.email, '', user.name, setAuthUser)
     //         }
     //     }
     //     fetchUser()
-    //     fetchUserSession()
-    //     if(authUser) logInUser(authUser, setAuthUser)
     // }, [authUser]);
 
     //useEffect to fetch user's topics

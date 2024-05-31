@@ -8,18 +8,20 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { authUserAtom } from '../store/authAtom.js';
 import Loading from '../components/Loading.js';
 import { loadingAtom } from '../store/loader.js';
+import { useNavigate } from 'react-router-dom';
 
 interface signinPropsTypes {
   setShowSignIn: Function;
   setShowSignUp: Function;
-  setAuthenticated: Function;
+  setAuthenticated?: Function;
 }
 
-const Signin = ({setShowSignIn, setShowSignUp, setAuthenticated}: signinPropsTypes) => {
+const Signin = ({setShowSignIn, setShowSignUp}: signinPropsTypes) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const setAuthUser = useSetRecoilState(authUserAtom)
   const [loading, setLoading] = useRecoilState(loadingAtom);
+  const navigate = useNavigate()
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -41,9 +43,10 @@ const Signin = ({setShowSignIn, setShowSignUp, setAuthenticated}: signinPropsTyp
     // Handle sign in
     try {
       event.preventDefault()
-      const user = await handleLogin(email, password);
-      await logInUser(user, setAuthUser);
-      setAuthenticated(true);
+      // const user = await handleLogin(email, password);
+      const user = await logInUser(email, password);
+      setAuthUser(user);
+      navigate('/home')
     } catch (error) {
       console.error("Error while signing in.")
     } finally {
@@ -83,15 +86,15 @@ const Signin = ({setShowSignIn, setShowSignUp, setAuthenticated}: signinPropsTyp
 
         <span className=' text-sm font-light text-gray-500'>Don't have an account? <span className=' text-base font-bold  text-black cursor-pointer' onClick={() => {setShowSignIn(false); setShowSignUp(true)}}>Create One.</span></span>
 
-        <span className="text-base font-thin text-gray-400">Or</span>
+        {/* <span className="text-base font-thin text-gray-400">Or</span> */}
 
-        <Button 
+        {/* <Button 
           title="Continue with Google" 
           type="button" 
           onClick={googleAuth} 
           buttonStyles="bg-white text-black border-2 border-black rounded-md" 
           icon={<FaGoogle />} 
-        />
+        /> */}
       </form>
     </div>
   );

@@ -24,12 +24,10 @@ const Navbar = ({ setShowSignIn, setShowSignUp }: NavbarPropsTypes) => {
     const [showDropdown, setShowDropdown] = useState(false)
     const optionsRef = useRef<HTMLDivElement>(null);
 
-    console.log(authUser)
-
     const authenticated = useMemo(() => {
         if(localStorage.getItem('medium-userId'))
             return true
-    }, [authUser])
+    }, [authUser, localStorage])
 
     const handleClickOutside = (event: MouseEvent) => {
         if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
@@ -51,7 +49,7 @@ const Navbar = ({ setShowSignIn, setShowSignUp }: NavbarPropsTypes) => {
     }, []);
 
     return (
-        <div className='flex items-center justify-between px-20 py-3 border-b-[2px] bg-white'>
+        <div className={`flex items-center justify-between px-20 ${authenticated ? 'py-1' : 'py-3' }  border-b-[2px] bg-white`}>
             <div className='flex items-center gap-3 cursor-pointer' onClick={() => navigate('/')}>
                 <img className='w-18 h-14' src={logo} alt='' />
                 <h1 className='font-bold text-3xl'>Medium</h1>
@@ -70,7 +68,7 @@ const Navbar = ({ setShowSignIn, setShowSignUp }: NavbarPropsTypes) => {
                     <Avatar
                         className='cursor-pointer font-semibold'
                         sx={{ bgcolor: grey[900] }}
-                        alt={(authUser as { email: string }).email?.toUpperCase()}
+                        alt={(authUser as any).user.email?.toUpperCase()}
                         src="/broken-image.jpg"
                         onClick={() => setShowDropdown(!showDropdown)}
                     />

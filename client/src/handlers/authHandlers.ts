@@ -1,7 +1,7 @@
-import { deleteSessionById, handleSignup } from "../appwrite";
+import { handleSignup } from "../appwrite";
 import { SERVER } from "../config";
 
-export const storeUserData = async (email: string, password: string, name: string, setAuthUser: Function) => {
+export const storeUserData = async (email: string, password: string, name: string) => {
     try {
         const response = await fetch(`${SERVER}/api/v1/user/signup`, {
             method: "POST",
@@ -17,9 +17,6 @@ export const storeUserData = async (email: string, password: string, name: strin
         }
 
         const data = await response.json();
-        console.log(data)
-        setAuthUser(data)
-
         await handleSignup(data.user.id, email, password, name)
 
         localStorage.setItem('medium-token', data.jwt);
@@ -49,6 +46,8 @@ export const logInUser = async (email:string, password:string) => {
         const data = await response.json();
 
         console.log(data)
+        localStorage.setItem('medium-userId', data.user.id)
+        localStorage.setItem('medium-token', data.jwt)
         return data;
 
     } catch (error) {
@@ -60,7 +59,6 @@ export const logOutHandler = (setAuthUser:Function) => {
     localStorage.removeItem('medium-token');
     localStorage.removeItem('medium-userId');
     setAuthUser({});
-    deleteSessionById();
 } 
 
 

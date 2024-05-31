@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import LandingImg from '../assets/landing_page.webp'
 import Signup from './Signup'
 import Signin from './Signin';
@@ -11,10 +10,10 @@ interface landingPageType {
     showSignUp: boolean;
     setShowSignUp: Function;
     setShowSignIn: Function;
-    setAuthenticated: Function;
+    setAuthenticated?: Function;
 }
 
-const landing = ({showSignIn, showSignUp, setShowSignIn, setShowSignUp, setAuthenticated}: landingPageType) => {
+const landing = ({showSignIn, showSignUp, setShowSignIn, setShowSignUp}: landingPageType) => {
 
   const loading = useRecoilValue(loadingAtom);
 
@@ -22,8 +21,8 @@ const landing = ({showSignIn, showSignUp, setShowSignIn, setShowSignUp, setAuthe
     
   return (
     <div className='h-[80vh] w-full flex'>
-        {showSignUp && !showSignIn && <Signup setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} setAuthenticated={setAuthenticated}/>}
-        {!showSignUp && showSignIn && <Signin setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} setAuthenticated={setAuthenticated}/>}
+        {showSignUp && !showSignIn && <Signup setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} />}
+        {!showSignUp && showSignIn && <Signin setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />}
         <div className='  flex flex-col items-start gap-8 pl-20 py-32 '>
             <h1 className='font-bold text-8xl flex flex-col'>Human <span>Stories and Ideas</span></h1>
             <p className='text-xl'>A place to read, write, and deepen your understanding</p>

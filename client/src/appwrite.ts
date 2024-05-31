@@ -11,7 +11,7 @@ export const googleAuth = async () => {
   try {
     account.createOAuth2Session(
       'google' as OAuthProvider,
-      `${CLIENT}/home`,
+      `${CLIENT}/get-started/topics`,
       `${CLIENT}/fail`,
     );
   } catch (error) {
@@ -19,9 +19,21 @@ export const googleAuth = async () => {
   }
 }
 
+export const createSessiomWithSecretandID = async (secret: string, userId: string) => {
+      const result = await account.createSession(
+      userId,
+      secret
+  );
+  console.log(result)
+  const user = await account.get()
+  console.log(user)
+  await account.deleteSession(result.$id)
+}
+
 export const getUserData = async () => {
   try {
     const user = await account.get()
+    console.log(user)
     return user;
   } catch (error) {
     console.error('Error while fetching user details:', error)

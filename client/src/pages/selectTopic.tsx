@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import logo from '../assets/logo.svg'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { PiPlus } from "react-icons/pi";
 import { PiCheck } from "react-icons/pi";
 import { fetchAllTopics, updateUserTopics } from '../handlers/userHandlers';
@@ -9,6 +9,7 @@ import { loadingAtom } from '../store/loader';
 import Loading from '../components/Loading';
 import { userTopicsAtom } from '../store/userAtom';
 import { authUserAtom } from '../store/authAtom';
+import { createSessiomWithSecretandID } from '../appwrite';
 
 const Topic = (props: {item:{id:number, name: string, mainTopicId: number}, key:number, selected: any, setSelected: Function}) => {
 
@@ -45,6 +46,20 @@ const SelectTopic = () => {
     const [loading, setLoading] = useRecoilState(loadingAtom)
     const navigate = useNavigate();
     const setUserTopics = useSetRecoilState(userTopicsAtom)
+
+    const [searchParams] = useSearchParams();
+
+    const secret = searchParams.get('secret');
+    const userId = searchParams.get('userId');
+
+    console.log(secret, userId)
+
+    useEffect(() => {
+        if(secret && userId) {
+
+            createSessiomWithSecretandID(secret, userId)
+        }
+    }, [searchParams])
 
     const buttonStyle = useMemo(() => {
         return selected.length < 5 ? 'bg-gray-100 text-gray-400' : 'bg-black text-white cursor-pointer'

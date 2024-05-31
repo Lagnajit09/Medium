@@ -18,7 +18,7 @@ function App() {
   const [authUser, setAuthUser] = useRecoilState(authUserAtom)
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
-  const [authenticated, setAuthenticated] = useState(false);
+  // const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useRecoilState(loadingAtom);
   const navigate = useNavigate()
 
@@ -31,7 +31,7 @@ function App() {
         if(userId) {
           const data = await getUserById(userId);
           console.log(data)
-          setAuthUser(data);
+          setAuthUser({user:data});
         }
       } catch (error) {
         console.error('Error while finding user!');
@@ -56,12 +56,14 @@ function App() {
           {!loading && 
           <Routes>
              <Route path="/" element={
-              <Landing showSignIn={showSignIn} showSignUp={showSignUp} setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} setAuthenticated={setAuthenticated} /> 
+              <Landing showSignIn={showSignIn} showSignUp={showSignUp} setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} /> 
               } />
+              {<>
               <Route path="/home" element={<Home />} />
               <Route path="/get-started/topics" element={<SelectTopic />} />
               <Route path="/new-story" element={<NewBlog />} />
               <Route path="/blog/:id/edit" element={<EditBlog />} />
+              </>}
           </Routes>}
         {!loading && <Footer />}
     </>

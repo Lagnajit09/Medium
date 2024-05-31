@@ -1,8 +1,6 @@
 import  { useEffect, useRef, useState } from 'react';
-import {  googleAuth, handleSignup } from "../appwrite.ts"
 import Input from '../components/Input.js';
 import Button from '../components/Button.js';
-import { FaGoogle } from 'react-icons/fa';
 import { storeUserData } from '../handlers/authHandlers.ts';
 import { authUserAtom } from '../store/authAtom.ts';
 import { useRecoilState, useSetRecoilState } from 'recoil';
@@ -10,13 +8,14 @@ import { loadingAtom } from '../store/loader.ts';
 import Loading from '../components/Loading.tsx';
 import { useNavigate } from 'react-router-dom';
 
+
 interface signupPropsTypes {
   setShowSignUp: Function;
   setShowSignIn: Function;
-  setAuthenticated: Function;
+  setAuthenticated?: Function;
 }
 
-const Signup = ({setShowSignUp, setShowSignIn, setAuthenticated}: signupPropsTypes) => {
+const Signup = ({setShowSignUp, setShowSignIn}: signupPropsTypes) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,6 +32,7 @@ const Signup = ({setShowSignUp, setShowSignIn, setAuthenticated}: signupPropsTyp
     }
   };
 
+
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
@@ -44,9 +44,9 @@ const Signup = ({setShowSignUp, setShowSignIn, setAuthenticated}: signupPropsTyp
     setLoading(true);
     try {
       event.preventDefault();
-      const user = await storeUserData(email, password, username, setAuthUser);
+      const user = await storeUserData(email, password, username);
       if(!user) throw Error;
-      setAuthenticated(true);
+      setAuthUser(user);
       navigate('/get-started/topics')
     } catch (error) {
       console.error("Error while signing up.")
@@ -55,8 +55,6 @@ const Signup = ({setShowSignUp, setShowSignIn, setAuthenticated}: signupPropsTyp
     }
 
   };
-
-  console.log()
 
   if(loading) return <Loading />
 
@@ -99,15 +97,7 @@ const Signup = ({setShowSignUp, setShowSignIn, setAuthenticated}: signupPropsTyp
         
         <span className=' text-sm font-light text-gray-500'>Already have an account? <span className=' text-base font-bold text-black cursor-pointer' onClick={() => {setShowSignIn(true); setShowSignUp(false)}}>Log In.</span></span>
 
-        <span className="text-base font-thin text-gray-400">Or</span>
-
-        <Button 
-          title="Continue with Google" 
-          type="button" 
-          onClick={googleAuth} 
-          buttonStyles="bg-white text-black border-2 border-black rounded-md" 
-          icon={<FaGoogle />} 
-        />
+        {/* <span className="text-base font-thin text-gray-400">Or</span> */}
       </form>
     </div>
   );

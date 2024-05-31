@@ -64,11 +64,13 @@ userRouter.post('/signup', async (c) => {
                 email: body.email,
                 password: hashedPassword,
                 name: body.name || ""
+            }, include: {
+                posts: true,
+                topics: true
             }
         })
     
         const jwt = await sign({id: user.id}, c.env.JWT_SECRET);
-        c.set('userId', user.id as string)
     
         return c.json({jwt, user: user})
     } catch(e) {
@@ -95,7 +97,10 @@ userRouter.post('/signin', async (c) => {
 
             const user = await prisma.user.findUnique({
                 where: {
-                    email: body.email
+                  email: body.email
+                }, include: {
+                  posts: true,
+                  topics: true
                 }
             });
     
@@ -103,8 +108,6 @@ userRouter.post('/signin', async (c) => {
                 c.status(405);
                 return c.json({ error: "user not found" });
             }
-
-            c.set('userId', user.id as string)
     
             const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
             return c.json({ jwt, user: user  });
