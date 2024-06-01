@@ -65,11 +65,12 @@ export const logOutHandler = (setAuthUser:Function) => {
 export const getUserById = async (userId: string) => {
     const id = localStorage.getItem('medium-userId')
     try {
-        const response = await fetch(`${SERVER}/api/v1/user/${id}`);
+        const response = await fetch(`${SERVER}/api/v1/user/${userId}`);
 
         if(response.status === 404) throw Error;
 
         const data = await response.json();
+        console.log(data)
         return data;
 
     } catch (error) {

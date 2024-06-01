@@ -50,7 +50,7 @@ const Navbar = ({ setShowSignIn, setShowSignUp }: NavbarPropsTypes) => {
 
     return (
         <div className={`flex items-center justify-between px-20 ${authenticated ? 'py-1' : 'py-3' }  border-b-[2px] bg-white`}>
-            <div className='flex items-center gap-3 cursor-pointer' onClick={() => navigate('/')}>
+            <div className='flex items-center gap-3 cursor-pointer' onClick={() => navigate(`${authenticated ? '/home' : '/'}`)}>
                 <img className='w-18 h-14' src={logo} alt='' />
                 <h1 className='font-bold text-3xl'>Medium</h1>
             </div>
@@ -59,7 +59,9 @@ const Navbar = ({ setShowSignIn, setShowSignUp }: NavbarPropsTypes) => {
                     <span className='cursor-pointer hover:border-b-2'>Our Story</span>
                     <span className='cursor-pointer hover:border-b-2'>Membership</span>
                 </>}
-                <span className=' flex gap-1 items-center cursor-pointer hover:border-b-2' onClick={() => {navigate('/new-story')}}>
+                <span className=' flex gap-1 items-center cursor-pointer hover:border-b-2' onClick={() => {navigate('/new-story', {
+                    state: {title: '', data: {}}
+                })}}>
                     {authenticated && <RxPencil2 className='w-6 h-6' />}
                     Write
                 </span>

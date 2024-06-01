@@ -6,8 +6,11 @@ import Image from '@editorjs/image';
 import Code from '@editorjs/code';
 import LinkTool from '@editorjs/link';
 import { SERVER } from '../config';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { editorInstanceAtom } from '../store/userAtom';
+import { loadingAtom } from '../store/loader';
+import Loading from './Loading';
+import { useNavigate } from 'react-router-dom';
 
 interface EditorProps {
   data?: OutputData | undefined;
@@ -17,11 +20,14 @@ interface EditorProps {
 const Editor = ({data, fetchedTitle}:EditorProps) => {
   const editorInstance = useRef<EditorJS>();
   const [title, setTitle] = useState(fetchedTitle);
-  const setEditorAtom = useSetRecoilState(editorInstanceAtom)
+  const setEditorAtom = useSetRecoilState(editorInstanceAtom);
+  const loading = useRecoilValue(loadingAtom)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!editorInstance.current) {
-      editorInstance.current = new EditorJS({
+      try {
+        editorInstance.current = new EditorJS({
         holder: 'editorjs',
         placeholder: 'Let\'s write an awesome story!',
         tools: {
@@ -89,12 +95,19 @@ const Editor = ({data, fetchedTitle}:EditorProps) => {
         data: data,
         onChange: updateBtnText
         });
-        
+      } catch (error) {
+        navigate('/home')
+      }
       }
   
       return () => {
+        try {
         editorInstance.current?.destroy();
         editorInstance.current = undefined;
+        } catch (error) {
+          console.log("first")
+        }
+
       };
     }, []);
 
@@ -117,7 +130,6 @@ const Editor = ({data, fetchedTitle}:EditorProps) => {
       const data = await editorInstance?.current?.save();
       return {title, data};
     }
-
 
   return (
     <div className='w-[80%] mx-auto pt-10 overflow-hidden'>

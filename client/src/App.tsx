@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Landing from './pages/landing'
 import Footer from './components/Footer'
@@ -13,6 +13,7 @@ import SelectTopic from './pages/selectTopic'
 import NewBlog from './pages/newBlog'
 import EditBlog from './pages/editBlog'
 import { getUserById } from './handlers/authHandlers'
+import PublishBlog from './pages/publishBlog'
 
 function App() {
   const [authUser, setAuthUser] = useRecoilState(authUserAtom)
@@ -20,7 +21,15 @@ function App() {
   const [showSignUp, setShowSignUp] = useState(false);
   // const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useRecoilState(loadingAtom);
+  const location = useLocation();
   const navigate = useNavigate()
+
+  // Define the routes where Navbar and Footer should not be displayed
+  const noNavFooterRoutes = ['/new-story', '/blog/:id/edit', '/story/publish'];
+
+  // Check if the current path is in the noNavFooterRoutes list
+  const hideNavFooter = noNavFooterRoutes.some(route => location.pathname.startsWith(route));
+
 
   useEffect(() => {
     const isAuthenticated = async () => {
@@ -32,6 +41,7 @@ function App() {
           const data = await getUserById(userId);
           console.log(data)
           setAuthUser({user:data});
+          navigate('/home')
         }
       } catch (error) {
         console.error('Error while finding user!');
@@ -50,7 +60,7 @@ function App() {
 
   return (
     <>
-        {!loading && 
+        {!loading && !hideNavFooter &&
         <Navbar setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} />
         }
           {!loading && 
@@ -63,9 +73,10 @@ function App() {
               <Route path="/get-started/topics" element={<SelectTopic />} />
               <Route path="/new-story" element={<NewBlog />} />
               <Route path="/blog/:id/edit" element={<EditBlog />} />
+              <Route path="/story/publish" element={<PublishBlog />} />
               </>}
           </Routes>}
-        {!loading && <Footer />}
+        {!loading && !hideNavFooter && <Footer />}
     </>
   );
 }

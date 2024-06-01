@@ -3,6 +3,7 @@ import { userTopicsAtom } from '../store/userAtom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { fetchRecommendedTopics } from '../handlers/userHandlers';
 import { Skeleton } from '@mui/material';
+import { HiArrowRight } from "react-icons/hi2";
 
 interface recommendedType {
     topic: any;
@@ -53,7 +54,7 @@ const HomeRight = () => {
         };
     }, []);
 
-    if(!recommended) return;
+    if(!recommended) setLoading(true);
 
   return (
     <div id='recommended-topics' className='flex w-[22%] border-l-2 px-5 fixed right-32 h-[100vh]'>
@@ -62,12 +63,16 @@ const HomeRight = () => {
             <div className=' flex flex-wrap items-center justify-start mt-3'>
                 {!loading && recommended.map((rt, index) => <Recommended topic={rt} key={index} loading={loading} />)}
             </div>
+            <div className=' flex gap-2 items-center text-sm mt-5 ml-2 cursor-pointer hover:border-b-2 w-[40%]'>
+                <p>See all topics</p>
+                <HiArrowRight />
+            </div>
         </div>
     </div>
   )
 }
 
-const Recommended = ({topic, key, loading}: recommendedType) => {
+const Recommended = ({topic, loading}: recommendedType) => {
     return (
         <>
             {loading ? 

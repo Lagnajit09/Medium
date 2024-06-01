@@ -57,6 +57,7 @@ blogRouter.post("/post/publish", async (c) => {
             return c.json({error: "Insufficient data"})
         }
 
+        // Create a new post
         const blog = await prisma.post.create({
             data: {
                 title: body.title,
@@ -64,12 +65,22 @@ blogRouter.post("/post/publish", async (c) => {
                 authorId: userId,
                 published: true,
                 topicId: Number(body.topic)
-            }, include: {
-                topic: true
+            },
+            include: {
+                author: {
+                    select: {
+                        name: true,
+                        email: true
+                    }
+                },
+                topic: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
             }
-        })
-
-        blog.content = JSON.parse(blog.content)
+        });
 
         return c.json(blog)
     } catch(error) {
@@ -236,7 +247,7 @@ blogRouter.get('/post/followed-posts', async (c) => {
     }).$extends(withAccelerate());
 
     try {
-        // Find the user by userId and include their followed topics
+          // Find the user by userId and include their followed topics and posts with author and topic details
         const user = await prisma.user.findUnique({
             where: { id: userId },
             include: {
@@ -245,17 +256,59 @@ blogRouter.get('/post/followed-posts', async (c) => {
                         posts: {
                             where: {
                                 published: true
+                            },
+                            include: {
+                                author: {
+                                    select: {
+                                        name: true,
+                                        email: true
+                                    }
+                                },
+                                topic: {
+                                    select: {
+                                        id: true,
+                                        name: true
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         });
-    
-        // Extract posts from user's followed topics
-        let posts = Array()
-        if(user) {
-            posts = user.topics.reduce((allPosts, topic:any) => allPosts.concat(topic.posts), []);
+
+        // Define the type for the posts array
+        type PostWithDetails = {
+            id: number;
+            title: string;
+            content: string;
+            published: boolean;
+            createdAt: Date;
+            authorId: string;
+            topicId: number;
+            author: {
+                name: string | null;
+                email: string;
+            };
+            topic: {
+                id: number;
+                name: string;
+            };
+        };
+
+        // Extract posts from user's followed topics with topic details
+        let posts: PostWithDetails[] = [];
+        if (user) {
+            posts = user.topics.reduce((allPosts: PostWithDetails[], topic) => {
+                const topicPosts = topic.posts.map(post => ({
+                    ...post,
+                    topic: {
+                        id: topic.id,
+                        name: topic.name
+                    }
+                }));
+                return allPosts.concat(topicPosts);
+            }, []);
         }
     
         return c.json(posts);

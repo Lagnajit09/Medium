@@ -7,7 +7,7 @@ import Button from './Button'
 import { LuShare } from "react-icons/lu";
 import { editorInstanceAtom, userBlogsAtom } from "../store/userAtom"
 import { useState } from "react"
-import { saveUserBlog, updateUserBlog } from "../handlers/userHandlers"
+import { publishUserBlog, saveUserBlog, updateUserBlog } from "../handlers/userHandlers"
 import { useNavigate } from "react-router-dom";
 
 interface EditorBarProps {
@@ -24,14 +24,25 @@ const EditorBar = ({update, id}: EditorBarProps) => {
     const [buttonTitle, setButtonTitle] = useState(update?'Saved':'Save');
     const navigate = useNavigate()
 
-    const handlePublish = async () => {}
+    const handlePublish = async () => {
+        try {
+            const data = await editorAtom();
+            if(!data?.title || data?.data?.blocks.length===0) throw Error('No title or data provided!');
+            navigate('/story/publish', {
+                state: data
+            })
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const handleSave = async () => {
         setLoading(true)
         try {
             const data = await editorAtom();
 
-            if(!data?.title && data?.data?.blocks.length===0) throw Error;
+            if(!data?.title && data?.data?.blocks.length===0) throw Error('Insufficient data!');
 
             const savedPost = await saveUserBlog(data);
             setUserBlogs((prev):any => [...prev, savedPost])
@@ -41,7 +52,7 @@ const EditorBar = ({update, id}: EditorBarProps) => {
                 state: savedPost
             });
         } catch (error) {
-            console.log('Error while saving blog!')
+            console.log('Error while saving blog:' + error)
         } finally{
             setLoading(false)
         }
@@ -84,18 +95,19 @@ const EditorBar = ({update, id}: EditorBarProps) => {
     }
 
   return (
-    <div className=' w-[70%] mx-auto p-3 flex justify-between items-center relative'>
+    <div className=' w-[70%] mx-auto p-3 flex justify-between items-center'>
         <div className=' flex gap-4 items-center'>
-            <img src={Logo} alt='logo.svg' className=' w-12 h-12' />
-            <p className=' text-gray-700'>{(authUser as { name: string }).name}</p>
+            <img src={Logo} alt='logo.svg' className=' w-12 h-12 cursor-pointer' onClick={() => navigate('/home')} />
+            <p className=' text-gray-700'>{(authUser as any).user.name}</p>
         </div>
         <div className=' flex gap-6 items-center'>
-            <Button title='Publish' onClick={handlePublish} buttonStyles=' bg-green-600 text-white border-2 border-green-600 rounded-full text-sm cursor-pointer' />
+
+            <Button title='Publish' onClick={handlePublish} buttonStyles=' bg-green-600 text-white border-2 border-green-600 rounded-full text-sm cursor-pointer hover:bg-white hover:text-green-600' id="publishBtn" />
 
             {loading ?
                 <CircularProgress /> 
                 : 
-                <Button id="saveBlogButton" title={buttonTitle} onClick={!update? handleSave : handleUpdate} buttonStyles=' bg-white text-gray-600 border-2 border-gray-600 rounded-full text-sm cursor-pointer' />
+                <Button id="saveBlogButton" title={buttonTitle} onClick={!update? handleSave : handleUpdate} buttonStyles=' bg-white text-gray-600 border-2 border-gray-600 rounded-full text-sm cursor-pointer hover:bg-gray-600 hover:text-white' />
             }
 
             <LuShare className=' w-5 h-5 cursor-pointer' />
@@ -103,7 +115,7 @@ const EditorBar = ({update, id}: EditorBarProps) => {
             <Avatar
                 className='cursor-pointer font-semibold'
                 sx={{ bgcolor: grey[900] }}
-                alt={(authUser as { email: string }).email?.toUpperCase()}
+                alt={(authUser as any).user.email?.toUpperCase()}
                 src="/broken-image.jpg"
             />
         </div>

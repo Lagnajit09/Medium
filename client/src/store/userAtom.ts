@@ -1,7 +1,13 @@
 import { OutputData } from "@editorjs/editorjs";
 import { atom } from "recoil";
 
-export const blogsAtom = atom({
+interface Blog {
+  id: number;
+  title: string;
+  content: string;
+}
+
+export const blogsAtom = atom<Blog[]>({
   key: "blogsAtom",
   default: [],
 });

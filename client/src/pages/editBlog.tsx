@@ -7,7 +7,7 @@ const EditBlog = () => {
   const {state} = useLocation();
     
   return (
-    <div className='w-screen h-screen absolute z-50 top-0 bg-white overflow-x-hidden'>
+    <div className='w-screen h-screen bg-white overflow-x-hidden'>
         <EditorBar update={true} id={state.id} />
         <Editor data={state.content.data} fetchedTitle={state.title} />
     </div>

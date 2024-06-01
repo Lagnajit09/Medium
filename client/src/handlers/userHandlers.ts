@@ -116,6 +116,7 @@ export const fetchHomeBlogs = async () => {
         })
 
         const data = await response.json();
+        console.log(data)
 
         return data;
     } catch (error) {
@@ -136,6 +137,31 @@ export const saveUserBlog = async (postData: any) => {
               Authorization: `Bearer ${jwt}`
             },
             body: JSON.stringify({title:postData.title, content:JSON.stringify(postData)}),
+        })
+
+        if(response.status === 410) return Error;
+
+        const data = await response.json();
+        console.log(data)
+        return data;
+    } catch (error) {
+        console.error('Failed to save data!')
+    }
+}
+
+
+//method to save user blog
+export const publishUserBlog = async (title: string, content: any, topic: any) => {
+    const jwt = localStorage.getItem('medium-token');
+    const userId = localStorage.getItem('medium-userId');
+    try {
+        const response = await fetch(`${SERVER}/api/v1/blog/post/publish`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${jwt}`
+            },
+            body: JSON.stringify({title, content:JSON.stringify(content), topic}),
         })
 
         if(response.status === 410) return Error;

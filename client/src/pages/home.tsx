@@ -1,16 +1,15 @@
 import { useEffect } from 'react'
-import { fetchUserSession, getUserData, handleLogin, isNewUser } from '../appwrite'
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { authUserAtom } from '../store/authAtom';
-import { logInUser, storeUserData } from '../handlers/authHandlers';
-import { fetchAllTopics, fetchUserTopics } from '../handlers/userHandlers';
-import { userTopicsAtom } from '../store/userAtom';
+import { fetchAllTopics, fetchHomeBlogs, fetchUserTopics } from '../handlers/userHandlers';
+import { blogsAtom, userTopicsAtom } from '../store/userAtom';
 import { useNavigate } from 'react-router-dom';
 import Blogs from '../components/Blogs';
 import HomeRight from '../components/HomeRight';
 
 const home = () => {
     const [authUser, setAuthUser] = useRecoilState(authUserAtom);
+    const setBlogs = useSetRecoilState(blogsAtom);
     const [userTopics, setUserTopics] = useRecoilState(userTopicsAtom)
     const navigate = useNavigate()
 
@@ -44,6 +43,18 @@ const home = () => {
         setUserTopics(userFetchedTopics)
       }
       checkUserTopics()
+      
+    }, [authUser])
+
+
+    useEffect(() => {
+
+      const fetchBlogs = async () => {
+        const fetchedBlogs = await fetchHomeBlogs();
+        console.log(fetchedBlogs)
+        setBlogs(fetchedBlogs)
+      }
+      fetchBlogs()
       
     }, [authUser])
 
