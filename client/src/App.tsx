@@ -14,6 +14,8 @@ import NewBlog from './pages/newBlog'
 import EditBlog from './pages/editBlog'
 import { getUserById } from './handlers/authHandlers'
 import PublishBlog from './pages/publishBlog'
+import AllTopics from './pages/allTopics'
+import TopicPosts from './pages/topicPosts'
 
 function App() {
   const [authUser, setAuthUser] = useRecoilState(authUserAtom)
@@ -65,8 +67,9 @@ function App() {
         }
           {!loading && 
           <Routes>
-             <Route path="/" element={
-              <Landing showSignIn={showSignIn} showSignUp={showSignUp} setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} /> 
+             <Route path="/" 
+              element={
+                <Landing showSignIn={showSignIn} showSignUp={showSignUp} setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} /> 
               } />
               {<>
               <Route path="/home" element={<Home />} />
@@ -74,6 +77,8 @@ function App() {
               <Route path="/new-story" element={<NewBlog />} />
               <Route path="/blog/:id/edit" element={<EditBlog />} />
               <Route path="/story/publish" element={<PublishBlog />} />
+              <Route path="/all-topics" element={<AllTopics />} />
+              <Route path="/topic/:id" element={<TopicPosts />} />
               </>}
           </Routes>}
         {!loading && !hideNavFooter && <Footer />}

@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { blogsAtom, userTopicsAtom } from '../store/userAtom'
 import { Skeleton } from '@mui/material';
 import { PiBookmarksSimpleLight } from "react-icons/pi";
 import { fetchHomeBlogs } from '../handlers/userHandlers';
+import { BlogSkeleton } from './BlogSkeleton';
+import { PiPlusCircleThin } from "react-icons/pi";
 
 const Blogs = () => {
   const userTopics = useRecoilValue(userTopicsAtom);
@@ -16,8 +18,7 @@ const Blogs = () => {
       try {
         const fetchedBlogs = await fetchHomeBlogs();
         setBlogs(fetchedBlogs);
-        console.log(fetchedBlogs)
-        setLoading(true)
+        setLoading(false)
       } catch (error) {
         setLoading(true)
       }
@@ -25,6 +26,9 @@ const Blogs = () => {
 
     fetchBlogs()
   }, []);
+
+  console.log(blogs)
+  console.log(userTopics)
 
   if(loading) {
   return(       
@@ -38,37 +42,16 @@ const Blogs = () => {
 
 
   return (
-    <div className='flex w-[70%]'>
-      <div className=' w-full border-b-2 h-2 mt-16'>
-
+<div className='w-full p-5'>
+  <div className='w-[70%] flex gap-5 overflow-scroll scrollbar-hide border-b border-gray-300'>
+    <div className=' text-black w-12 h-12 p-2 pr-0'><PiPlusCircleThin style={{width:'25px', height: '25px', cursor: 'pointer'}} /></div>
+    {userTopics.map((topic:any, index:number) => 
+      <div key={index} className='whitespace-nowrap p-2 text-gray-500 text-sm cursor-pointer hover:text-gray-800'>
+        {topic.name}
       </div>
-    </div>
-  )
-}
-
-const BlogSkeleton = () => {
-  return (
-    <div className='flex w-[100%] mt-10 gap-5 justify-between border-b-2 border-gray-100 pb-8'>
-      <div className=' flex flex-col w-[80%] gap-5'>
-          <div className='flex items-baseline gap-3 w-full'>
-            <Skeleton variant='circular' width={30} height={30} />
-            <Skeleton variant='rectangular' className='rounded-lg w-[30%]' height={2} />
-          </div>
-          <div className=' flex flex-col gap-3 w-full items-start'>
-            <Skeleton variant='rectangular' className='rounded-md w-full' height={15} />
-            <Skeleton variant='rectangular' className='rounded-md w-full' height={70} />
-          </div>
-          <div className=' flex items-center justify-between w-full'>
-            <Skeleton variant='rectangular' className='rounded-3xl w-[12%]' height={20} />
-            <div className='flex gap-3'>
-              <Skeleton variant='circular' className=' w-5 h-5 ' />
-              <Skeleton variant='circular' className=' w-5 h-5 ' />
-              <Skeleton variant='circular' className=' w-5 h-5 ' />
-            </div>
-          </div>
-      </div>
-      <Skeleton variant='rectangular' className=' rounded-md mt-7' width={120} height={120} />
-    </div>
+    )}
+  </div>
+</div>
   )
 }
 

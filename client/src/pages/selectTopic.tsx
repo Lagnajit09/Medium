@@ -47,20 +47,6 @@ const SelectTopic = () => {
     const navigate = useNavigate();
     const setUserTopics = useSetRecoilState(userTopicsAtom)
 
-    const [searchParams] = useSearchParams();
-
-    const secret = searchParams.get('secret');
-    const userId = searchParams.get('userId');
-
-    console.log(secret, userId)
-
-    useEffect(() => {
-        if(secret && userId) {
-
-            createSessiomWithSecretandID(secret, userId)
-        }
-    }, [searchParams])
-
     const buttonStyle = useMemo(() => {
         return selected.length < 5 ? 'bg-gray-100 text-gray-400' : 'bg-black text-white cursor-pointer'
     }, [selected])
@@ -70,7 +56,8 @@ const SelectTopic = () => {
 
         try {
             await updateUserTopics(selected);
-            setUserTopics((prev) => [...prev, ...selected])
+            setUserTopics((prev) => [...prev, ...selected]);
+            setAllTopics([])
             navigate('/home')
         } catch (error) {
             console.error('Failed to update user topics!')
