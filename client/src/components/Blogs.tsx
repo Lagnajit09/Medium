@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
-import { blogsAtom, userTopicsAtom } from '../store/userAtom'
+import { useRecoilState } from 'recoil'
+import { blogsAtom } from '../store/userAtom'
 import { Skeleton } from '@mui/material';
-import { PiBookmarksSimpleLight } from "react-icons/pi";
 import { fetchHomeBlogs } from '../handlers/userHandlers';
 import { BlogSkeleton } from './BlogSkeleton';
-import { PiPlusCircleThin } from "react-icons/pi";
+import TopicBar from './TopicBar';
+import BlogOverview from './BlogOverview';
 
 const Blogs = () => {
-  const userTopics = useRecoilValue(userTopicsAtom);
   const [blogs, setBlogs] = useRecoilState(blogsAtom);
   const [loading, setLoading] = useState(true)
 
@@ -28,7 +27,6 @@ const Blogs = () => {
   }, []);
 
   console.log(blogs)
-  console.log(userTopics)
 
   if(loading) {
   return(       
@@ -42,16 +40,23 @@ const Blogs = () => {
 
 
   return (
-<div className='w-full p-5'>
-  <div className='w-[70%] flex gap-5 overflow-scroll scrollbar-hide border-b border-gray-300'>
-    <div className=' text-black w-12 h-12 p-2 pr-0'><PiPlusCircleThin style={{width:'25px', height: '25px', cursor: 'pointer'}} /></div>
-    {userTopics.map((topic:any, index:number) => 
-      <div key={index} className='whitespace-nowrap p-2 text-gray-500 text-sm cursor-pointer hover:text-gray-800'>
-        {topic.name}
-      </div>
-    )}
-  </div>
-</div>
+    <div className='w-full p-5 min-h-[82vh]'>
+      <TopicBar />
+      {
+        blogs.map((blog:any, index:number) => {
+          return (
+            <BlogOverview
+              key={index}
+              title={blog.title}
+              content={blog.content}
+              author={blog.author.name}
+              topic={blog.topic.name}
+              createdAt={blog.createdAt}
+              id={{topic: blog.topicId, author: blog.authorId}}
+            />)
+        })
+      }
+    </div>
   )
 }
 
