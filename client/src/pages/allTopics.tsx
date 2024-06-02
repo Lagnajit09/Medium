@@ -6,9 +6,38 @@ import SearchBar from "../components/explore-topics/SearchBar";
 import Topics from "../components/explore-topics/Topics";
 
 const getRandomSubtopics = (topics: any) => {
-  const subtopics = topics.flatMap((topic: any) => topic.subtopics);
-  const shuffled = subtopics.sort(() => 0.5 - Math.random());
+  const shuffled = topics.sort(() => 0.5 - Math.random());
   return shuffled.slice(0, 10);
+};
+
+interface MainTopic {
+  id: number;
+  name: string;
+}
+
+interface Subtopic {
+  id: number;
+  name: string;
+}
+
+interface Topic {
+  mainTopic: MainTopic;
+  subtopics: Subtopic[];
+}
+
+interface FlattenedSubtopic extends Subtopic {
+  mainTopicId: number;
+}
+
+const flattenArray = (topics: Topic[]): (MainTopic | FlattenedSubtopic)[] => {
+  const flattenedArray: (MainTopic | FlattenedSubtopic)[] = topics.reduce((acc: (MainTopic | FlattenedSubtopic)[], topic) => {
+      acc.push(topic.mainTopic);
+      topic.subtopics.forEach((subtopic: Subtopic) => {
+          acc.push({ ...subtopic, mainTopicId: topic.mainTopic.id });
+      });
+      return acc;
+  }, []);
+  return flattenedArray;
 };
 
 const AllTopics = () => {
@@ -16,17 +45,18 @@ const AllTopics = () => {
   const [allTopics, setAllTopics] = useState([]);
   const [randomSubtopics, setRandomSubtopics] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchData, setSearchData] = useState<(MainTopic | FlattenedSubtopic)[]>([])
 
   useEffect(() => {
     const getAllTopics = async () => {
       setLoading(true)
       try {
         const data = await fetchAllTopicsAndSubtopics();
-        console.log(data);
         if(!data.length) throw new Error('Failed to fetch topics!')
         setAllTopics(data);
-        const subtopics = getRandomSubtopics(data);
-        console.log(subtopics)
+        const flattenedTopics = flattenArray(data);
+        setSearchData(flattenedTopics)
+        const subtopics = getRandomSubtopics(flattenedTopics);
         setRandomSubtopics(subtopics);
       } catch (error) {
         console.log(error);
@@ -43,9 +73,9 @@ const AllTopics = () => {
   return (
     <div className="flex flex-col w-[75%] min-h-[80vh] mt-5 mx-auto gap-5">
       <TopBar topics={randomSubtopics} />
-      <div>
-        <h1>Explore Topics</h1>
-        <SearchBar />
+      <div className=" flex flex-col w-full gap-5 mt-5 mb-20 items-center justify-center">
+        <h1 className=" text-4xl font-bold text-gray-800">Explore Topics</h1>
+        <SearchBar data={searchData} />
       </div>
       <Topics />
     </div>
