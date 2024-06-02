@@ -566,8 +566,8 @@ blogRouter.get('/topics', async (c) => {
         // Structure the topics in a better way
         const structuredTopics = mainTopics.map(mainTopic => {
         return {
-          mainTopic: mainTopic.name,
-          subtopics: mainTopic.topics.map(topic => topic.name)
+          mainTopic: {id:mainTopic.id, name:mainTopic.name},
+          subtopics: mainTopic.topics.map(topic => {return {id: topic.id, name:topic.name}})
         };
         });
   

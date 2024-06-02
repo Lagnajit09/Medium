@@ -32,7 +32,6 @@ function App() {
   // Check if the current path is in the noNavFooterRoutes list
   const hideNavFooter = noNavFooterRoutes.some(route => location.pathname.startsWith(route));
 
-
   useEffect(() => {
     const isAuthenticated = async () => {
 
@@ -43,7 +42,7 @@ function App() {
           const data = await getUserById(userId);
           console.log(data)
           setAuthUser({user:data});
-          navigate('/home')
+          location.pathname==='/' && navigate('/home')
         }
       } catch (error) {
         console.error('Error while finding user!');

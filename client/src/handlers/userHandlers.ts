@@ -19,8 +19,25 @@ export const fetchAllTopics = async () => {
             return []
         }
 
-        if(data.length < 1) console.log("first")
+        return data;
+    } catch (error) {
+        console.error('Failed to fetch topics!')
+    }
+}
 
+
+//method to fetch all topics and their subtopics
+export const fetchAllTopicsAndSubtopics = async () => {
+    const jwt = localStorage.getItem('medium-token');
+
+    try {
+        const response = await fetch(`${SERVER}/api/v1/blog/topics`, {
+            headers: {
+                Authorization: `Bearer ${jwt}`
+            }
+        })
+
+        const data = await response.json();
         console.log(data)
 
         return data;
@@ -28,6 +45,7 @@ export const fetchAllTopics = async () => {
         console.error('Failed to fetch topics!')
     }
 }
+
 
 
 //method to fetch user followed topics
