@@ -15,24 +15,25 @@ interface MainTopic {
   name: string;
 }
 
-interface Subtopic {
+export interface topicType {
   id: number;
   name: string;
+  mainTopicId?: number;
 }
 
 interface Topic {
   mainTopic: MainTopic;
-  subtopics: Subtopic[];
+  subtopics: topicType[];
 }
 
-interface FlattenedSubtopic extends Subtopic {
+interface FlattenedSubtopic extends topicType {
   mainTopicId: number;
 }
 
 const flattenArray = (topics: Topic[]): (MainTopic | FlattenedSubtopic)[] => {
   const flattenedArray: (MainTopic | FlattenedSubtopic)[] = topics.reduce((acc: (MainTopic | FlattenedSubtopic)[], topic) => {
       acc.push(topic.mainTopic);
-      topic.subtopics.forEach((subtopic: Subtopic) => {
+      topic.subtopics.forEach((subtopic: topicType) => {
           acc.push({ ...subtopic, mainTopicId: topic.mainTopic.id });
       });
       return acc;
@@ -77,7 +78,7 @@ const AllTopics = () => {
         <h1 className=" text-4xl font-bold text-gray-800">Explore Topics</h1>
         <SearchBar data={searchData} />
       </div>
-      <Topics />
+      <Topics topics={allTopics} />
     </div>
   )
 }

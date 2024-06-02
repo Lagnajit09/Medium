@@ -3,7 +3,15 @@ import ReactSearchBox from "react-search-box";
 import { IoSearchOutline } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
 
-const SearchBar = ({data}: any) => {
+interface SearchBarType {
+    data: Array<{
+        id: number,
+        name: string
+        mainTopicId?:number;
+    }>;
+}
+
+const SearchBar = ({data}: SearchBarType) => {
 
     const navigate = useNavigate()
 
@@ -21,8 +29,8 @@ const SearchBar = ({data}: any) => {
             data={topics}
             callback={(record: any) => console.log(record)}
             onSelect={(record: any) => navigate(`/topic/${record.item.key}`)}
-            inputBackgroundColor={'#f9f9f9'}
-            inputBorderColor={'#f9f9f9'}
+            inputBackgroundColor={'rgb(243 244 246 / 1)'}
+            inputBorderColor={'rgb(243 244 246 / 1)'}
             dropDownHoverColor={'lightgray'}
         />
     </div>
