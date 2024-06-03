@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import EditorJS, { OutputData } from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import Paragraph from '@editorjs/paragraph';
@@ -13,13 +13,15 @@ import { useNavigate } from 'react-router-dom';
 interface EditorProps {
   data?: OutputData | undefined;
   fetchedTitle: string;
+  read?:boolean;
 }
 
-const Editor = ({data, fetchedTitle}:EditorProps) => {
+const Editor = ({data, fetchedTitle, read}:EditorProps) => {
   const editorInstance = useRef<EditorJS>();
   const [title, setTitle] = useState(fetchedTitle);
   const setEditorAtom = useSetRecoilState(editorInstanceAtom);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  
 
   useEffect(() => {
     if (!editorInstance.current) {
@@ -81,7 +83,11 @@ const Editor = ({data, fetchedTitle}:EditorProps) => {
               },
             },
           },
-          code: Code,
+          code: {
+            class: Code,
+            config: {
+            }
+          },
           linkTool: {
             class: LinkTool,
             config: {
@@ -90,6 +96,7 @@ const Editor = ({data, fetchedTitle}:EditorProps) => {
           }
         },
         data: data,
+        readOnly: read,
         onChange: updateBtnText
         });
       } catch (error) {
@@ -132,12 +139,13 @@ const Editor = ({data, fetchedTitle}:EditorProps) => {
     <div className='w-[80%] mx-auto pt-10 overflow-hidden'>
         <textarea 
             placeholder='Title' 
-            className='min-w-[50%] max-w-[80%] border-b-2 font-bold text-5xl p-1 outline-none text-gray-800 ml-[20%] resize-none scrollbar-hide' 
+            className='min-w-[50%] max-w-[80%] border-b-2 font-bold text-5xl p-1 outline-none text-gray-800 ml-[20%] resize-none scrollbar-hide bg-white' 
             onChange={
                 (e) => {
                   setTitle(e.target.value); 
                   updateBtnText();
                 }} 
+            disabled={read}
           >{title}</textarea>
       <div id="editorjs" className=" my-4 p-4 text-gray-800"></div>
     </div>

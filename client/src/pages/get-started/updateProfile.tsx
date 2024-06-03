@@ -2,17 +2,23 @@ import { useState } from 'react';
 import logo from '../../assets/logo.svg'
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import Button from '../../components/Button';
-import { updateProfile } from '../../handlers/userHandlers';
+import { updateProfileDB } from '../../handlers/userHandlers';
 import { useNavigate } from 'react-router-dom';
+import { storage } from '../../firebase';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { useRecoilState } from 'recoil';
+import { authUserAtom } from '../../store/authAtom';
 
 const UpdateProfile = () => {
+    const [authUser, setAuthUser] = useRecoilState(authUserAtom)
     const [bio, setBio] = useState('');
     const navigate = useNavigate()
-
-    const [imageSrc, setImageSrc] = useState('');
+    const [imageSrc, setImageSrc] = useState<string>('');
+    const [file, setFile] = useState<File | null>(null);
 
     const handleImageChange = (e: any) => {
         const file = e.target.files[0];
+        setFile(file)
         const reader = new FileReader();
 
         reader.onload = (event:any) => {
@@ -22,11 +28,36 @@ const UpdateProfile = () => {
         reader.readAsDataURL(file);
     };
 
+    const updateProfile = async () => {
+        if (!file) return;
+
+        const storageRef = ref(storage, `images/${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+                // Progress handler (optional)
+            },
+            (error) => {
+                console.error('Upload failed', error);
+            },
+            async () => {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                const updatedUser = await updateProfileDB(downloadURL, bio)
+                console.log(updatedUser);
+                if(!updatedUser) throw new Error;
+                setAuthUser({user: updatedUser})
+                navigate('/get-started/topics');
+            }
+        );
+    };
+
   return (
     <div className='flex-col w-[30%] mx-auto justify-center items-center'>
         <div className=" flex gap-2 w-fit mx-auto items-center mt-14">
             <img src={logo} alt="" width={35} height={35} />
-            <h2>Prism</h2>
+            <h2>Medium</h2>
         </div>
         <div className="w-full h-[30vh] flex justify-center mt-20 relative">
             {imageSrc ? (
@@ -59,7 +90,6 @@ const UpdateProfile = () => {
                 onClick={
                     () => {
                         updateProfile(); 
-                        navigate('/get-started/topics')
                     }} 
             />
             <Button 

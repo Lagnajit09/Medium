@@ -68,10 +68,10 @@ const Navbar = ({ setShowSignIn, setShowSignUp }: NavbarPropsTypes) => {
                 {authenticated && <GoBell className='w-6 h-6 mr-1 cursor-pointer' />}
                 {authenticated ?
                     <Avatar
-                        className='cursor-pointer font-semibold'
+                        className='cursor-pointer font-semibold border border-gray-900'
                         sx={{ bgcolor: grey[900] }}
                         alt={(authUser as any).user.email?.toUpperCase()}
-                        src="/broken-image.jpg"
+                        src={(authUser as any).user.image ? (authUser as any).user.image : '../broken-img.png'}
                         onClick={() => setShowDropdown(!showDropdown)}
                     />
                     :

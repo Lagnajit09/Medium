@@ -10,7 +10,7 @@ const NewBlog = () => {
   return (
     <div className='w-screen h-screen bg-white overflow-x-hidden'>
         <EditorBar update={false} id={0} />
-        <Editor data={state.data} fetchedTitle={state.title} />
+        <Editor data={state.data} fetchedTitle={state.title} read={false} />
     </div>
   )
 }

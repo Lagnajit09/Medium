@@ -50,9 +50,10 @@ const Blogs = () => {
               title={blog.title}
               content={blog.content}
               author={blog.author.name}
+              authorImg={blog.author.image}
               topic={blog.topic.name}
               createdAt={blog.createdAt}
-              id={{topic: blog.topicId, author: blog.authorId}}
+              id={{topic: blog.topicId, author: blog.authorId, blog:blog.id}}
             />)
         })
       }

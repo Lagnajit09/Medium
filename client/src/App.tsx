@@ -16,6 +16,7 @@ import PublishBlog from './pages/publishBlog'
 import AllTopics from './pages/get-started/allTopics'
 import TopicPosts from './pages/topicPosts'
 import UpdateProfile from './pages/get-started/updateProfile'
+import ReadBlog from './pages/readBlog'
 
 function App() {
   const [authUser, setAuthUser] = useRecoilState(authUserAtom)
@@ -76,6 +77,7 @@ function App() {
               <Route path="/get-started/topics" element={<SelectTopic />} />
               <Route path="/new-story" element={<NewBlog />} />
               <Route path="/blog/:id/edit" element={<EditBlog />} />
+              <Route path="/blog/:id" element={<ReadBlog />} />
               <Route path="/story/publish" element={<PublishBlog />} />
               <Route path="/all-topics" element={<AllTopics />} />
               <Route path="/topic/:id" element={<TopicPosts />} />

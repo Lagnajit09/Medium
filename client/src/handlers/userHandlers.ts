@@ -244,4 +244,32 @@ export const fetchBlogByID = async (id:number) => {
 } 
 
 
-export const updateProfile = async () => {}
+export const updateProfileDB = async (image: string, bio: string) => {
+    try {
+        const jwt = localStorage.getItem('medium-token');
+        const userId = localStorage.getItem('medium-userId');
+        try {
+            const response = await fetch(`${SERVER}/api/v1/user/update`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${jwt}`
+                },
+                body: JSON.stringify({userId, image, bio})
+            })
+
+
+            if(response.status===401) throw new Error('Unauthorized access');
+            if(response.status===404) throw new Error('User not found');
+    
+            const data = await response.json();
+
+            console.log(data);
+    
+            return data;
+        } catch (error) {
+            console.error('Failed to fetch blogs!')
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}

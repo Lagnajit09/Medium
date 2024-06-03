@@ -2,24 +2,31 @@ import { Avatar } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { useMemo } from "react";
 import { PiBookmarksSimpleLight } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
 
 interface overviewType {
     title: string;
     content: string;
     author: string;
+    authorImg: string;
     topic: string;
     createdAt: string;
     id: {
         topic: number;
         author: string;
+        blog: number;
     }
 }
 
-const BlogOverview = ({title, content, author, topic, createdAt, id}: overviewType) => {
+const BlogOverview = ({title, content, author, authorImg, topic, createdAt, id}: overviewType) => {
+
+    const navigate = useNavigate()
 
     const parsedContent = useMemo(() => {
         return JSON.parse(content)
     }, [content])
+
+    console.log(id)
 
     console.log(parsedContent)
 
@@ -63,14 +70,19 @@ const BlogOverview = ({title, content, author, topic, createdAt, id}: overviewTy
             <div className="top w-auto flex text-sm items-center gap-4">
                 <div className="flex items-center gap-2 cursor-pointer">
                     <Avatar className='cursor-pointer font-semibold'
-                        sx={{ bgcolor: grey[800] }} src="../broken-image.png" alt={author.toUpperCase()} style={{width: '25px', height: '25px', fontSize: '14px'}} />
+                        sx={{ bgcolor: grey[800] }} src={authorImg ? authorImg : '../broken-img.png'} alt={author.toUpperCase()} style={{width: '25px', height: '25px', fontSize: '14px'}} />
                     <p>{author}</p>
                 </div>
                 <p className=" text-xs text-gray-400">{date}</p>
             </div>
-            <div className="medium">
-                <h2 className=" cursor-pointer">{title}</h2>
-                <p className=" text-sm text-gray-600 cursor-pointer">{slicedContent()}</p>
+            <div className="medium cursor-pointer" onClick={() => navigate(`/blog/${id.blog}`, {
+                state: {
+                    title,
+                    content: parsedContent
+                }
+            })}>
+                <h2>{title}</h2>
+                <p className=" text-sm text-gray-600">{slicedContent()}</p>
             </div>
             <div className="bottom flex items-center justify-between mt-3">
                 <div className="flex items-center gap-2 text-xs text-gray-400">

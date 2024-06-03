@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+firebase.ts
+
 .env
 
 # Editor directories and files

@@ -261,7 +261,8 @@ blogRouter.get('/post/followed-posts', async (c) => {
                                 author: {
                                     select: {
                                         name: true,
-                                        email: true
+                                        email: true,
+                                        image: true
                                     }
                                 },
                                 topic: {
