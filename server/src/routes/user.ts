@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { sign } from 'hono/jwt'
+import { sign, verify } from 'hono/jwt'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import bcrypt from 'bcryptjs'
@@ -17,6 +17,24 @@ export const userRouter = new Hono<{
 		userId: string
 	}
 }>();
+
+
+//middleware to authenticate jwt
+userRouter.use('/update', async (c, next) => {
+	const jwt = c.req.header('Authorization');
+	if (!jwt) {
+		c.status(401);
+		return c.json({ error: "unauthorized" });
+	}
+	const token = jwt.split(' ')[1];
+	const payload = await verify(token, c.env.JWT_SECRET);
+	if (!payload) {
+		c.status(401);
+		return c.json({ error: "unauthorized" });
+	}
+	c.set('userId', payload.id as string);
+	await next()
+})
 
 
 //export routes
@@ -115,6 +133,51 @@ userRouter.post('/signin', async (c) => {
             c.status(500);
             return c.json({ error: "error while signing in" });
         }
+})
+
+userRouter.put('/update', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env?.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  try {
+    const body = await c.req.json()
+
+    if(body.userId !== c.get('userId'))
+      return c.json('Unauthorized access!', 401);
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: body.userId
+      }
+    })
+
+    if(!user) return c.json('User not found', 404)
+
+    if(body.name) user.name = body.name;
+    if(body.password) {
+      const hashedPassword = await bcrypt.hash(body.password, 10)
+      user.password = hashedPassword;
+    } 
+    if(body.image) user.image = body.image;
+    if(body.bio) user.bio = body.bio;
+
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: body.userId
+      }, data: {
+        name: user.name,
+        password: user.password,
+        image: user.image,
+        bio: user.bio
+      }
+    })
+
+    return c.json(updatedUser)
+
+  } catch (error) {
+    return c.json('error while updating user info.', 500)
+  }
 })
 
 
