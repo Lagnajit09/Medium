@@ -242,3 +242,6 @@ export const fetchBlogByID = async (id:number) => {
         console.error('Failed to fetch blogs!')
     }
 } 
+
+
+export const updateProfile = async () => {}

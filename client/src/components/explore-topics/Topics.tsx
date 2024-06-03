@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { topicType } from "../../pages/allTopics";
+import { topicType } from "../../pages/get-started/allTopics";
 import TopicCard from "./TopicCard";
 
 interface TopicsType {

@@ -1,5 +1,4 @@
 import { MdExplore } from "react-icons/md";
-import { FaChevronRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 interface TopBarType {
@@ -21,7 +20,7 @@ const TopBar = ({topics}:TopBarType) => {
           <p className="text-sm">Explore</p>
         </div>
         {topics.map((item, index) => (
-          <div className="whitespace-nowrap text-gray-800 px-4 py-2 bg-gray-100 rounded-full text-sm cursor-pointer" key={index}
+          <div className="whitespace-nowrap text-gray-800 px-4 py-2 bg-gray-100 rounded-full text-sm hover:text-black cursor-pointer" key={index}
             onClick={()=>navigate(`/topic/${item.id}`)}
           >
             {item.name}

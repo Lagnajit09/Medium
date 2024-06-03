@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { topicType } from '../../pages/allTopics';
+import { topicType } from '../../pages/get-started/allTopics';
 import { useNavigate } from 'react-router-dom';
 
 interface CardType {

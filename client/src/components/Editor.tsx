@@ -6,10 +6,8 @@ import Image from '@editorjs/image';
 import Code from '@editorjs/code';
 import LinkTool from '@editorjs/link';
 import { SERVER } from '../config';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { editorInstanceAtom } from '../store/userAtom';
-import { loadingAtom } from '../store/loader';
-import Loading from './Loading';
 import { useNavigate } from 'react-router-dom';
 
 interface EditorProps {
@@ -21,7 +19,6 @@ const Editor = ({data, fetchedTitle}:EditorProps) => {
   const editorInstance = useRef<EditorJS>();
   const [title, setTitle] = useState(fetchedTitle);
   const setEditorAtom = useSetRecoilState(editorInstanceAtom);
-  const loading = useRecoilValue(loadingAtom)
   const navigate = useNavigate()
 
   useEffect(() => {

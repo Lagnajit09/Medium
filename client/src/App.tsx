@@ -4,7 +4,6 @@ import Landing from './pages/landing'
 import Footer from './components/Footer'
 import Home from './pages/home'
 import { useEffect, useState } from 'react'
-import { fetchUserSession } from './appwrite'
 import Loading from './components/Loading'
 import { RecoilRoot, useRecoilState } from 'recoil'
 import { authUserAtom } from './store/authAtom'
@@ -14,8 +13,9 @@ import NewBlog from './pages/newBlog'
 import EditBlog from './pages/editBlog'
 import { getUserById } from './handlers/authHandlers'
 import PublishBlog from './pages/publishBlog'
-import AllTopics from './pages/allTopics'
+import AllTopics from './pages/get-started/allTopics'
 import TopicPosts from './pages/topicPosts'
+import UpdateProfile from './pages/get-started/updateProfile'
 
 function App() {
   const [authUser, setAuthUser] = useRecoilState(authUserAtom)
@@ -27,7 +27,7 @@ function App() {
   const navigate = useNavigate()
 
   // Define the routes where Navbar and Footer should not be displayed
-  const noNavFooterRoutes = ['/new-story', '/blog/:id/edit', '/story/publish'];
+  const noNavFooterRoutes = ['/new-story', '/blog/:id/edit', '/story/publish', '/get-started/profile', '/get-started/topics'];
 
   // Check if the current path is in the noNavFooterRoutes list
   const hideNavFooter = noNavFooterRoutes.some(route => location.pathname.startsWith(route));
@@ -72,6 +72,7 @@ function App() {
               } />
               {<>
               <Route path="/home" element={<Home />} />
+              <Route path="/get-started/profile" element={<UpdateProfile />} />
               <Route path="/get-started/topics" element={<SelectTopic />} />
               <Route path="/new-story" element={<NewBlog />} />
               <Route path="/blog/:id/edit" element={<EditBlog />} />
