@@ -8,7 +8,7 @@ const ReadBlog = () => {
   console.log(state)
     
   return (
-    <div className='min-h-[82vh] bg-white overflow-x-hidden'>
+    <div className='min-h-[82vh] bg-white overflow-x-hidden dark:bg-gray-800'>
         <Editor data={state.content} fetchedTitle={state.title} read={true} />
     </div>
   )

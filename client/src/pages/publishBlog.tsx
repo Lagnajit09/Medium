@@ -8,6 +8,7 @@ import  Button  from '../components/Button';
 import { IoCloseOutline } from "react-icons/io5";
 import { CircularProgress } from '@mui/material'
 import { blogsAtom } from '../store/userAtom';
+import { useTheme } from '../ThemeContext';
 
 interface TopicType {
     id: number;
@@ -23,6 +24,7 @@ const PublishBlog = () => {
     const setBlogs = useSetRecoilState(blogsAtom);
     const {state} = useLocation();
     const navigate = useNavigate()
+    const {theme} = useTheme()
     console.log(state);
 
     useEffect(() => {
@@ -74,32 +76,33 @@ const PublishBlog = () => {
     }
 
   return (
-    <div className='flex w-[65%] h-screen items-center mx-auto'>
+    <div className="w-full dark:bg-gray-800">
+    <div className='flex w-[65%] h-screen items-center mx-auto '>
         <div className='flex flex-col w-[50%] gap-3 h-auto my-auto'>
-            <h3 className=' font-bold text-lg text-gray-700'>Story Preview</h3>
+            <h3 className=' font-bold text-lg text-gray-700 dark:text-gray-200'>Story Preview</h3>
             {
                 images.length > 0 ? 
                     <img src={images[0].data.file.url} alt='' width={400} height={200} className=' object-contain' />
                 :
-                    <div className=' w-[80%] bg-gray-100 px-8 py-20 text-center text-gray-400 text-sm'>Include a high-quality image in your story to make it more inviting to readers.</div>
+                    <div className=' w-[80%] bg-gray-100 px-8 py-20 text-center text-gray-400 text-sm dark:bg-gray-600 rounded-md'>Include a high-quality image in your story to make it more inviting to readers.</div>
             }
-            <h2 className=' text-lg mt-2 border-b w-[85%] text-gray-700'>{slicedTitle()}</h2>
-            <p className=' mt-2 border-b text-gray-600 w-[85%] text-base'>{slicedContent()}</p>
+            <h2 className=' text-lg mt-2 border-b w-[85%] text-gray-700 dark:text-gray-200'>{slicedTitle()}</h2>
+            <p className=' mt-2 border-b text-gray-600 w-[85%] text-base dark:text-gray-200'>{slicedContent()}</p>
         </div>
         <div className='flex w-[50%] h-full'>
             <div className=' flex-col h-auto my-auto gap-3 w-[90%]'>
                 <div className=" flex gap-2">
-                    <p >Publishing to: </p>
-                    <h2 className=' font-bold text-lg text-gray-600'>{(authUser as any).user.name}</h2>
+                    <p className=' dark:text-gray-300'>Publishing to: </p>
+                    <h2 className=' font-bold text-lg text-gray-600 dark:text-gray-200'>{(authUser as any).user.name}</h2>
                 </div>
-                <p className=' text-sm font-normal text-gray-700 mt-2'>Add a topic so readers know what your story is about</p>
+                <p className=' text-sm font-normal text-gray-700 mt-2 dark:text-gray-300'>Add a topic so readers know what your story is about</p>
 
                 <Select 
                     options={options}
                     values={[]}
-                    style={{width: '60%', border: '2px solid gray', marginTop: '10px'}}
+                    style={{width: '60%', border: '2px solid gray', marginTop: '10px', color:theme==='dark' ? 'white' : 'gray'}}
                     addPlaceholder=''
-                    color='gray'
+                    color={`${theme==='dark' ? 'white' : 'gray'}`}
                     searchBy='label'
                     labelField='label'
                     onChange={(value) => setSelectedTopic(value)}
@@ -113,8 +116,9 @@ const PublishBlog = () => {
             </div>
             <div className=' w-[7%] h-[5%] mx-auto text-4xl mt-12 cursor-pointer' onClick={() => navigate('/new-story', {
                 state: state
-            })}><IoCloseOutline /></div>
+            })}><IoCloseOutline className='dark:text-gray-200' /></div>
         </div>
+    </div>
     </div>
   )
 }

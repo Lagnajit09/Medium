@@ -49,10 +49,14 @@ const home = () => {
 
 
   return (
-    <div className='min-h-[80vh] flex w-[80%] mx-auto'>
+    <div className="w-full bg-white dark:bg-gray-800">
+
+      <div className='min-h-[82.5vh] flex w-[80%] mx-auto'>
       <Blogs/>
       <HomeRight/>
+      </div>
     </div>
+
   )
 }
 

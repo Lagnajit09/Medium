@@ -8,15 +8,16 @@ import Loading from './components/Loading'
 import { RecoilRoot, useRecoilState } from 'recoil'
 import { authUserAtom } from './store/authAtom'
 import { loadingAtom } from './store/loader'
-import SelectTopic from './pages/selectTopic'
+import SelectTopic from './pages/get-started/selectTopic'
 import NewBlog from './pages/newBlog'
 import EditBlog from './pages/editBlog'
 import { getUserById } from './handlers/authHandlers'
 import PublishBlog from './pages/publishBlog'
-import AllTopics from './pages/get-started/allTopics'
+import AllTopics from './pages/allTopics'
 import TopicPosts from './pages/topicPosts'
 import UpdateProfile from './pages/get-started/updateProfile'
 import ReadBlog from './pages/readBlog'
+import { ThemeProvider, useTheme } from './ThemeContext';
 
 function App() {
   const [authUser, setAuthUser] = useRecoilState(authUserAtom)
@@ -26,12 +27,27 @@ function App() {
   const [loading, setLoading] = useRecoilState(loadingAtom);
   const location = useLocation();
   const navigate = useNavigate()
+  const {theme} = useTheme()
 
-  // Define the routes where Navbar and Footer should not be displayed
-  const noNavFooterRoutes = ['/new-story', '/blog/:id/edit', '/story/publish', '/get-started/profile', '/get-started/topics'];
-
-  // Check if the current path is in the noNavFooterRoutes list
-  const hideNavFooter = location.pathname==='/' || noNavFooterRoutes.some(route => location.pathname.startsWith(route));
+    // Define the routes where Navbar and Footer should not be displayed
+    const noNavFooterRoutes = [
+      '/new-story',
+      '/story/publish',
+      '/get-started/profile',
+      '/get-started/topics',
+      // Define regex patterns for dynamic routes
+      /^\/blog\/\d+\/edit$/,
+    ];
+  
+    // Check if the current path is in the noNavFooterRoutes list
+    const hideNavFooter = location.pathname === '/' || noNavFooterRoutes.some(route => {
+      if (typeof route === 'string') {
+        return location.pathname.startsWith(route);
+      } else if (route instanceof RegExp) {
+        return route.test(location.pathname);
+      }
+      return false;
+    });
 
   useEffect(() => {
     const isAuthenticated = async () => {
@@ -63,7 +79,7 @@ function App() {
   return (
     <>
         {!loading && !hideNavFooter &&
-          <Navbar setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} />
+          <Navbar />
         }
           {!loading && 
           <Routes>
@@ -87,4 +103,4 @@ function App() {
     </>
   );
 }
-export default () =>  <BrowserRouter><RecoilRoot><App/></RecoilRoot></BrowserRouter> 
+export default () =>  <BrowserRouter><RecoilRoot><ThemeProvider><App/></ThemeProvider></RecoilRoot></BrowserRouter> 

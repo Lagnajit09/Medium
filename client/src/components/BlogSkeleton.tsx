@@ -2,7 +2,7 @@ import { Skeleton } from "@mui/material"
 
 export const BlogSkeleton = () => {
     return (
-      <div className='flex w-[100%] mt-10 gap-5 justify-between border-b-2 border-gray-100 pb-8'>
+      <div className='flex w-[100%] mt-10 gap-5 justify-between border-b-2 border-gray-100 pb-8 dark:border-gray-900'>
         <div className=' flex flex-col w-[80%] gap-5'>
             <div className='flex items-baseline gap-3 w-full'>
               <Skeleton variant='circular' width={30} height={30} />

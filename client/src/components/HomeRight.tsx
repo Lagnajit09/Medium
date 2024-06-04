@@ -55,14 +55,14 @@ const HomeRight = () => {
     if(!recommended) return;
 
   return (
-    <div id='recommended-topics' className='flex flex-col w-[22%] border-l-2 px-5 fixed right-32 h-[100vh]'>
+    <div id='recommended-topics' className='flex flex-col w-[22%] border-l-2 px-5 fixed right-32 h-[100vh] dark:border-gray-900'>
         {/* RECOMMENDED */}
         <div className='mt-10'>
-            <p className=' font-semibold text-base text-gray-700'>Recommended Topics</p>
+            <p className=' font-semibold text-base text-gray-700 dark:text-gray-300'>Recommended Topics</p>
             <div className=' flex flex-wrap items-center justify-start mt-3'>
                 {!loading && recommended.map((rt, index) => <Recommended topic={rt} key={index} loading={loading} />)}
             </div>
-            <div className=' flex gap-2 items-center text-sm mt-5 ml-2 cursor-pointer hover:text-gray-800 w-32 text-green-700'
+            <div className=' flex gap-2 items-center text-sm mt-5 ml-2 cursor-pointer hover:text-gray-800 w-32 text-green-700 dark:text-green-500'
                 onClick={() => navigate('/all-topics')}
             >
                 <p>See more topics</p>

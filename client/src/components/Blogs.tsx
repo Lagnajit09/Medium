@@ -40,7 +40,7 @@ const Blogs = () => {
 
 
   return (
-    <div className='w-full p-5 min-h-[82vh]'>
+    <div className='w-full p-5'>
       <TopicBar />
       {
         blogs.map((blog:any, index:number) => {

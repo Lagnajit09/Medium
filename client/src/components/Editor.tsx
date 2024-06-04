@@ -98,7 +98,7 @@ const Editor = ({data, fetchedTitle, read}:EditorProps) => {
         },
         data: data,
         readOnly: read,
-        onChange: (api, event) => {updateEditor(api, event); updateBtnText()}
+        onChange: () => {updateBtnText()}
         });
       } catch (error) {
         navigate('/home')
@@ -120,11 +120,6 @@ const Editor = ({data, fetchedTitle, read}:EditorProps) => {
         setEditorAtom(() => saveEditorData);
     }, [setEditorAtom, title])
 
-    const updateEditor = (api:any, event: any) => {
-      console.log(event.type)
-      console.log(api)
-    }
-
 
     const updateBtnText = () => {
       const saveBtn = document.getElementById("saveBlogButton");
@@ -145,7 +140,7 @@ const Editor = ({data, fetchedTitle, read}:EditorProps) => {
     <div className='w-[80%] mx-auto pt-10 overflow-hidden'>
         <textarea 
             placeholder='Title' 
-            className='min-w-[50%] max-w-[80%] border-b-2 font-bold text-5xl p-1 outline-none text-gray-800 ml-[20%] resize-none scrollbar-hide bg-white' 
+            className='min-w-[50%] max-w-[80%] border-b-2 font-bold text-5xl p-1 outline-none text-gray-800 ml-[20%] resize-none scrollbar-hide bg-white dark:bg-gray-800 dark:text-gray-100 dark:border-gray-900' 
             onChange={
                 (e) => {
                   setTitle(e.target.value); 
@@ -153,7 +148,7 @@ const Editor = ({data, fetchedTitle, read}:EditorProps) => {
                 }} 
             disabled={read}
           >{title}</textarea>
-      <div id="editorjs" className=" my-4 p-4 text-gray-800"></div>
+      <div id="editorjs" className=" my-4 p-4 text-gray-800 dark:text-gray-200"></div>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react'
 import ReactSearchBox from "react-search-box";
 import { IoSearchOutline } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../ThemeContext';
 
 interface SearchBarType {
     data: Array<{
@@ -12,7 +13,7 @@ interface SearchBarType {
 }
 
 const SearchBar = ({data}: SearchBarType) => {
-
+    const {theme} = useTheme()
     const navigate = useNavigate()
 
     console.log(data)
@@ -29,8 +30,8 @@ const SearchBar = ({data}: SearchBarType) => {
             data={topics}
             callback={(record: any) => console.log(record)}
             onSelect={(record: any) => navigate(`/topic/${record.item.key}`)}
-            inputBackgroundColor={'rgb(243 244 246 / 1)'}
-            inputBorderColor={'rgb(243 244 246 / 1)'}
+            inputBackgroundColor={`${theme==='dark' ? 'rgb(55 65 81 / 1)' : 'rgb(243 244 246 / 1)'}`}
+            inputBorderColor={`${theme==='dark' ? 'rgb(17 24 39 / 1)' : 'rgb(243 244 246 / 1)'}`}
             dropDownHoverColor={'lightgray'}
         />
     </div>

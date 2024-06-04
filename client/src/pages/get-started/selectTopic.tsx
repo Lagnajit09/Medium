@@ -1,15 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import logo from '../assets/logo.svg'
+import Logo from '../../assets/logo.svg'
+import DarkLogo from "../../assets/logo-dark.svg"
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { PiPlus } from "react-icons/pi";
 import { PiCheck } from "react-icons/pi";
-import { fetchAllTopics, updateUserTopics } from '../handlers/userHandlers';
+import { fetchAllTopics, updateUserTopics } from '../../handlers/userHandlers';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { loadingAtom } from '../store/loader';
-import Loading from '../components/Loading';
-import { userTopicsAtom } from '../store/userAtom';
-import { authUserAtom } from '../store/authAtom';
-import { createSessiomWithSecretandID } from '../appwrite';
+import { loadingAtom } from '../../store/loader';
+import Loading from '../../components/Loading';
+import { userTopicsAtom } from '../../store/userAtom'
+import { authUserAtom } from '../../store/authAtom';
+import { createSessiomWithSecretandID } from '../../appwrite';
+import { useTheme } from '../../ThemeContext';
 
 const Topic = (props: {item:{id:number, name: string, mainTopicId: number}, key:number, selected: any, setSelected: Function}) => {
 
@@ -28,11 +30,11 @@ const Topic = (props: {item:{id:number, name: string, mainTopicId: number}, key:
     }, [clicked])
 
     const styles = useMemo(() => {
-        return clicked ? 'border-green-600 text-green-700' : 'border-grey-100 text-black';
+        return clicked ? 'border-green-600 text-green-700 dark:border-white dark:text-white dark:bg-gray-600' : 'border-grey-100 text-black dark:bg-gray-800';
     }, [clicked])
 
     return (
-        <div className={`flex gap-2 items-center border-2 rounded-full px-4 py-2 mx-2 my-1 bg-gray-100 cursor-pointer ${styles}`} onClick={() => {setClicked(!clicked)} }  >
+        <div className={`flex gap-2 items-center border-2 rounded-full px-4 py-2 mx-2 my-1 bg-gray-100 cursor-pointer ${styles}  dark:text-gray-100 dark:border-gray-600`} onClick={() => {setClicked(!clicked)} }  >
             <p>{props.item.name}</p> 
             {clicked? <PiCheck /> : <PiPlus />}
         </div>
@@ -46,9 +48,10 @@ const SelectTopic = () => {
     const [loading, setLoading] = useRecoilState(loadingAtom)
     const navigate = useNavigate();
     const setUserTopics = useSetRecoilState(userTopicsAtom)
+    const {theme} = useTheme()
 
     const buttonStyle = useMemo(() => {
-        return selected.length < 5 ? 'bg-gray-100 text-gray-400' : 'bg-black text-white cursor-pointer'
+        return selected.length < 5 ? 'bg-gray-100 text-gray-400' : 'bg-black text-white cursor-pointer dark:bg-gray-200 dark:text-black'
     }, [selected])
 
     const updateTopic = async () => {
@@ -89,16 +92,16 @@ const SelectTopic = () => {
     if(loading) return <Loading />
 
   return (
-    <div className=' flex items-start flex-col w-full h-screen absolute top-0 bg-white p-5 z-50'>
+    <div className=' flex items-start flex-col w-full min-h-full absolute top-0 bg-white p-5 z-50 dark:bg-gray-800'>
         <div className='mx-auto flex items-center flex-col max-w-[50vw]'>
             <div className="flex gap-2 items-center">
-                <img className='w-18 h-14' src={logo} alt='' />
-                <h1 className='font-bold text-3xl'>Medium</h1>
+                <img className='w-18 h-14' src={theme==='dark'?DarkLogo:Logo} alt='' />
+                <h1 className='font-bold text-3xl dark:text-gray-200'>Medium</h1>
             </div>
 
             <div className=' flex flex-col items-center my-16'>
-                <h1 className=' font-semibold text-2xl'>What are you interested in?</h1>
-                <p className='my-3'>Choose five or more.</p>
+                <h1 className=' font-semibold text-2xl dark:text-gray-300'>What are you interested in?</h1>
+                <p className='my-3 dark:text-gray-300'>Choose five or more.</p>
             </div>
 
             <div className=' flex flex-wrap items-center justify-center mb-32'>
@@ -107,8 +110,8 @@ const SelectTopic = () => {
                 })}
             </div>
         </div>
-        <div className=' fixed bottom-0 z-1 bg-white p-5 w-full flex'>
-            <button className={` mx-auto rounded-3xl px-20 py-2 ${buttonStyle}`} disabled={selected.length < 5 ? true : false} onClick={updateTopic}>Continue</button>
+        <div className=' fixed bottom-0 left-0 z-1 bg-white p-5 w-full flex dark:bg-gray-900'>
+            <button className={` mx-auto rounded-3xl px-20 py-2 ${buttonStyle} dark:bg-gray-700 dark:text-gray-200`} disabled={selected.length < 5 ? true : false} onClick={updateTopic}>Continue</button>
         </div>
     </div>
   )

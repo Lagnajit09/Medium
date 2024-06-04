@@ -1,4 +1,5 @@
 import Logo from "../assets/logo.svg"
+import DarkLogo from "../assets/logo-dark.svg"
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { authUserAtom } from '../store/authAtom'
 import { Avatar, CircularProgress } from '@mui/material'
@@ -9,6 +10,7 @@ import { editorInstanceAtom, userBlogsAtom } from "../store/userAtom"
 import { useState } from "react"
 import { publishUserBlog, saveUserBlog, updateUserBlog } from "../handlers/userHandlers"
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../ThemeContext"
 
 interface EditorBarProps {
     update: boolean;
@@ -23,6 +25,7 @@ const EditorBar = ({update, id}: EditorBarProps) => {
     const [userBlogs, setUserBlogs] = useRecoilState(userBlogsAtom)
     const [buttonTitle, setButtonTitle] = useState(update?'Saved':'Save');
     const navigate = useNavigate()
+    const {theme} = useTheme()
 
     const handlePublish = async () => {
         try {
@@ -95,10 +98,10 @@ const EditorBar = ({update, id}: EditorBarProps) => {
     }
 
   return (
-    <div className=' w-[70%] mx-auto p-3 flex justify-between items-center'>
+    <div className=' w-full mx-auto p-3 flex justify-between px-32 items-center dark:bg-gray-900'>
         <div className=' flex gap-4 items-center'>
-            <img src={Logo} alt='logo.svg' className=' w-12 h-12 cursor-pointer' onClick={() => navigate('/home')} />
-            <p className=' text-gray-700'>{(authUser as any).user.name}</p>
+            <img src={theme==='dark'?DarkLogo:Logo} alt='logo.svg' className=' w-12 h-12 cursor-pointer' onClick={() => navigate('/home')} />
+            <p className=' text-gray-700 dark:text-gray-200'>{(authUser as any).user.name}</p>
         </div>
         <div className=' flex gap-6 items-center'>
 
@@ -107,16 +110,16 @@ const EditorBar = ({update, id}: EditorBarProps) => {
             {loading ?
                 <CircularProgress /> 
                 : 
-                <Button id="saveBlogButton" title={buttonTitle} onClick={!update? handleSave : handleUpdate} buttonStyles=' bg-white text-gray-600 border-2 border-gray-600 rounded-full text-sm cursor-pointer hover:bg-gray-600 hover:text-white' />
+                <Button id="saveBlogButton" title={buttonTitle} onClick={!update? handleSave : handleUpdate} buttonStyles=' bg-white text-gray-600 border-2 border-gray-600 rounded-full text-sm cursor-pointer hover:bg-gray-600 hover:text-white dark:bg-gray-900 dark:text-gray-200 dark:border:white' />
             }
 
-            <LuShare className=' w-5 h-5 cursor-pointer' />
+            <LuShare className=' w-5 h-5 cursor-pointer dark:text-gray-100' />
 
             <Avatar
-                className='cursor-pointer font-semibold'
-                sx={{ bgcolor: grey[900] }}
+                className='cursor-pointer font-semibold border border-gray-900 dark:text-gray-200'
+                sx={{ bgcolor: theme==='dark' ? grey[300] : grey[900] }}
                 alt={(authUser as any).user.email?.toUpperCase()}
-                src="/broken-image.jpg"
+                src={(authUser as any).user.image ? (authUser as any).user.image : '../broken-img.png'}
             />
         </div>
         

@@ -1,4 +1,5 @@
-import logo from '../assets/logo.svg'
+import Logo from '../assets/logo.svg'
+import DarkLogo from "../assets/logo-dark.svg"
 import { useNavigate } from 'react-router-dom';
 import { Avatar } from '@mui/material';
 import { grey } from '@mui/material/colors';
@@ -12,17 +13,16 @@ import { GoBell } from "react-icons/go";
 // import { FiHelpCircle } from "react-icons/fi";
 import { logOutHandler } from '../handlers/authHandlers';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTheme } from '../ThemeContext';
 
-interface NavbarPropsTypes {
-    setShowSignUp: Function;
-    setShowSignIn: Function;
-}
 
-const Navbar = ({ setShowSignIn, setShowSignUp }: NavbarPropsTypes) => {
+const Navbar = () => {
     const navigate = useNavigate();
     const [authUser, setAuthUser] = useRecoilState(authUserAtom)
     const [showDropdown, setShowDropdown] = useState(false)
     const optionsRef = useRef<HTMLDivElement>(null);
+    const { theme, toggleTheme } = useTheme();
+
 
     const authenticated = useMemo(() => {
         if(localStorage.getItem('medium-userId'))
@@ -49,48 +49,39 @@ const Navbar = ({ setShowSignIn, setShowSignUp }: NavbarPropsTypes) => {
     }, []);
 
     return (
-        <div className={`flex items-center justify-between px-20 ${authenticated ? 'py-1' : 'py-3' }  border-b-[2px] bg-white`}>
+        <div className={`flex items-center justify-between px-20 ${authenticated ? 'py-1' : 'py-3' }  border-b-2 bg-white dark:bg-gray-900 dark:border-black`}>
             <div className='flex items-center gap-3 cursor-pointer' onClick={() => navigate(`${authenticated ? '/home' : '/'}`)}>
-                <img className='w-18 h-14' src={logo} alt='' />
-                <h1 className='font-bold text-3xl'>Medium</h1>
+                <img className='w-18 h-14' src={theme==='dark'?DarkLogo:Logo} alt='' />
+                <h1 className='font-bold text-3xl dark:text-gray-200'>Medium</h1>
             </div>
             <div className='flex items-center gap-8'>
-                {!authenticated && <>
-                    <span className='cursor-pointer hover:border-b-2'>Our Story</span>
-                    <span className='cursor-pointer hover:border-b-2'>Membership</span>
-                </>}
-                <span className=' flex gap-1 items-center cursor-pointer hover:border-b-2' onClick={() => {navigate('/new-story', {
+                <span className=' flex gap-1 items-center cursor-pointer hover:border-b-2 dark:text-gray-200' onClick={() => {navigate('/new-story', {
                     state: {title: '', data: {}}
                 })}}>
-                    {authenticated && <RxPencil2 className='w-6 h-6' />}
+                    <RxPencil2 className='w-6 h-6' />
                     Write
                 </span>
-                {authenticated && <GoBell className='w-6 h-6 mr-1 cursor-pointer' />}
-                {authenticated ?
-                    <Avatar
-                        className='cursor-pointer font-semibold border border-gray-900'
-                        sx={{ bgcolor: grey[900] }}
+                <GoBell className='w-6 h-6 mr-1 cursor-pointer dark:text-gray-200' />
+                <Avatar
+                        className='cursor-pointer font-semibold border border-gray-900 dark:text-gray-200'
+                        sx={{ bgcolor: theme==='dark' ? grey[300] : grey[900] }}
                         alt={(authUser as any).user.email?.toUpperCase()}
                         src={(authUser as any).user.image ? (authUser as any).user.image : '../broken-img.png'}
                         onClick={() => setShowDropdown(!showDropdown)}
-                    />
-                    :
-                    <>
-                        <span className='cursor-pointer hover:border-b-2' onClick={() => { setShowSignIn(true); setShowSignUp(false) }}>
-                            Sign In
-                        </span>
-                        <button className='text-white bg-black px-4 py-2 rounded-3xl cursor-pointer' onClick={() => { setShowSignUp(true); setShowSignIn(false) }}>
-                            Get Started
-                        </button>
-                    </>
-                }
+                />
             </div>
-            {authenticated && showDropdown && <div className='flex flex-col items-start gap-4 pt-4 pb-4 absolute right-10 top-16 bg-white border-2 rounded-md shadow-xl z-20' ref={optionsRef}>
-                <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black'><span>Profile</span></div>
-                <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black'><span>Library</span></div>
-                <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black'><span>Settings</span></div>
-                <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black'><span>Help</span></div>
-                <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black'><span>Membership</span></div>
+            {authenticated && showDropdown && <div className='flex flex-col items-start gap-4 pt-4 pb-4 absolute right-10 top-16 bg-white border-2 rounded-md shadow-xl z-20 dark:bg-gray-800 dark:border-black' ref={optionsRef}>
+                <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black dark:text-white'><span>Profile</span></div>
+                <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black dark:text-white'><span>Library</span></div>
+                <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black dark:text-white'><span>Settings</span></div>
+                <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black dark:text-white'><span>Help</span></div>
+                <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black dark:text-white'><span>Membership</span></div>
+                <div
+                    onClick={toggleTheme}
+                    className="px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black dark:text-white"
+                >
+                    <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+                </div>
                 <div className='px-10 py-1 w-full cursor-pointer text-red-600 hover:text-red-500' onClick={() => { logOutHandler(setAuthUser); navigate('/') }}><span>Sign Out</span></div>
             </div>}
         </div>

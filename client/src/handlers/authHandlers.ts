@@ -21,6 +21,7 @@ export const storeUserData = async (email: string, password: string, name: strin
 
         localStorage.setItem('medium-token', data.jwt);
         localStorage.setItem('medium-userId', data.user.id);
+        localStorage.setItem('theme', 'dark')
 
         return data;
 
@@ -48,6 +49,7 @@ export const logInUser = async (email:string, password:string) => {
         console.log(data)
         localStorage.setItem('medium-userId', data.user.id)
         localStorage.setItem('medium-token', data.jwt)
+        localStorage.setItem('theme', 'dark')
         return data;
 
     } catch (error) {
@@ -63,7 +65,6 @@ export const logOutHandler = (setAuthUser:Function) => {
 
 
 export const getUserById = async (userId: string) => {
-    const id = localStorage.getItem('medium-userId')
     try {
         const response = await fetch(`${SERVER}/api/v1/user/${userId}`);
 
