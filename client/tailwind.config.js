@@ -13,7 +13,7 @@ export default {
     function ({ addUtilities }) {
       addUtilities({
         ".inner-shadow-right": {
-          "box-shadow": "inset -50px 0 10px -10px rgba(250, 250, 250, 0.8)",
+          "box-shadow": "inset -50px 0 10px -10px rgba(0, 0, 0, 0.8)",
         },
       });
     },

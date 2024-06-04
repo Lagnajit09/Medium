@@ -1,0 +1,48 @@
+@keyframes slide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.sliding-row {
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.sliding-row-inner {
+  display: flex;
+  gap: 12px;
+  animation: slide 20s linear infinite;
+}
+
+.sliding-item {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.shadow-left,
+.shadow-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.shadow-left {
+  left: 0;
+  background: linear-gradient(to right, rgb(17 24 39 / 1), rgba(0, 0, 0, 0));
+}
+
+.shadow-right {
+  right: 0;
+  background: linear-gradient(to left, rgb(17 24 39 / 1), rgba(0, 0, 0, 0));
+}

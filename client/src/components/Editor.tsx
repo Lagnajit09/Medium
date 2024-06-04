@@ -81,6 +81,7 @@ const Editor = ({data, fetchedTitle, read}:EditorProps) => {
                   });
                 },
               },
+              onchange: (api:any, event:any) => console.log(event.type)
             },
           },
           code: {
@@ -97,7 +98,7 @@ const Editor = ({data, fetchedTitle, read}:EditorProps) => {
         },
         data: data,
         readOnly: read,
-        onChange: updateBtnText
+        onChange: (api, event) => {updateEditor(api, event); updateBtnText()}
         });
       } catch (error) {
         navigate('/home')
@@ -118,6 +119,11 @@ const Editor = ({data, fetchedTitle, read}:EditorProps) => {
     useEffect(() => {
         setEditorAtom(() => saveEditorData);
     }, [setEditorAtom, title])
+
+    const updateEditor = (api:any, event: any) => {
+      console.log(event.type)
+      console.log(api)
+    }
 
 
     const updateBtnText = () => {

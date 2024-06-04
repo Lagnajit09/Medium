@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
-import Landing from './pages/landing'
+import Landing from './pages/landing-page/landing'
 import Footer from './components/Footer'
 import Home from './pages/home'
 import { useEffect, useState } from 'react'
@@ -31,7 +31,7 @@ function App() {
   const noNavFooterRoutes = ['/new-story', '/blog/:id/edit', '/story/publish', '/get-started/profile', '/get-started/topics'];
 
   // Check if the current path is in the noNavFooterRoutes list
-  const hideNavFooter = noNavFooterRoutes.some(route => location.pathname.startsWith(route));
+  const hideNavFooter = location.pathname==='/' || noNavFooterRoutes.some(route => location.pathname.startsWith(route));
 
   useEffect(() => {
     const isAuthenticated = async () => {
@@ -63,7 +63,7 @@ function App() {
   return (
     <>
         {!loading && !hideNavFooter &&
-        <Navbar setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} />
+          <Navbar setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} />
         }
           {!loading && 
           <Routes>
