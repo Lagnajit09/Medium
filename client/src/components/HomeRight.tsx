@@ -55,7 +55,7 @@ const HomeRight = () => {
     if(!recommended) return;
 
   return (
-    <div id='recommended-topics' className='flex flex-col w-[22%] border-l-2 px-5 fixed right-32 h-[100vh] dark:border-gray-900'>
+    <div id='recommended-topics' className='hidden md:flex flex-col w-[22%] border-l-2 px-5 fixed right-32 h-[100vh] dark:border-gray-900 '>
         {/* RECOMMENDED */}
         <div className='mt-10'>
             <p className=' font-semibold text-base text-gray-700 dark:text-gray-300'>Recommended Topics</p>

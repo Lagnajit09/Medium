@@ -60,7 +60,7 @@ const Signup = ({setShowSignUp, setShowSignIn}: signupPropsTypes) => {
 
   return (
     <div className="flex flex-col items-center p-5 h-screen w-screen absolute z-20 backdrop-blur-sm">
-      <form className="flex flex-col gap-5 items-center justify-center border-2 border-gray-900 p-5 pb-10 rounded-md w-[25vw] bg-gray-800 shadow-md my-auto bg-opacity-95" ref={formRef}>
+      <form className="flex flex-col gap-5 items-center justify-center border-2 border-gray-900 p-5 pb-10 rounded-md w-[80vw] md:w-[50vw] lg:w-[25vw] bg-gray-800 shadow-md my-auto bg-opacity-95" ref={formRef}>
         <h1 className="font-bold text-3xl text-white">Welcome back.</h1>
 
         <Input 

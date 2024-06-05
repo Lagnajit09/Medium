@@ -59,8 +59,8 @@ const UpdateProfile = () => {
 
   return (
     <div className="w-full h-screen overflow-hidden dark:bg-gray-800">
-    <div className='flex-col w-[30%] mx-auto justify-center items-center'>
-        <div className=" flex gap-2 w-fit mx-auto items-center mt-14">
+    <div className='flex-col w-[90%] md:w-[30%] mx-auto justify-center items-center'>
+        <div className=" flex gap-2 w-fit mx-auto items-center mt-20 md:mt-14">
             <img src={theme==='dark'?DarkLogo:Logo} alt="" width={35} height={35} />
             <h2 className=' dark:text-gray-200'>Medium</h2>
         </div>
@@ -79,7 +79,7 @@ const UpdateProfile = () => {
             )}
         </div>
         
-        <div className=" mt-5">
+        <div className=" mt-0 md:mt-5">
             <textarea 
                 placeholder='Bio' 
                 className=' border border-gray-500 rounded-md resize-none w-full h-24 p-3 scrollbar-hide dark:bg-gray-700 dark:text-gray-300'

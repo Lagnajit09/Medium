@@ -96,16 +96,18 @@ const Landing = ({showSignIn, showSignUp, setShowSignIn, setShowSignUp}: landing
     <>
     {showSignUp && !showSignIn && <Signup setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} />}
     {!showSignUp && showSignIn && <Signin setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />}
-    <div className=" w-screen h-screen bg-gray-900 py-5 pt-14 overflow-hidden relative ">
+    <div className=" w-screen h-screen bg-gray-900 py-16 overflow-hidden relative">
       <div className="shadow-left"></div>
       <div className="shadow-right"></div>
       <Card setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} />
+      <div className='flex flex-col gap-[9vh] lg:gap-[6vh]'>
       <Row data={art} colored={3} styles='float-left' bg='bg-purple-500'/>
       <Row data={programmingLanguages} colored={2} styles='float-right' bg='bg-orange-500'/>
       <Row data={health} colored={2} styles='float-left' bg='bg-yellow-400'/>
       <Row data={dataScience} colored={8} styles='float-right' bg='bg-red-500'/>
       <Row data={programming} colored={5} styles='float-left' bg='bg-green-500'/>
       <Row data={productivity} colored={7} styles='float-right' bg='bg-blue-500'/>
+      </div>
     </div>
     </>
   );
@@ -132,7 +134,7 @@ export const Card = ({setShowSignIn, setShowSignUp}: NavbarPropsTypes) => {
 
 export const Row = ({ data, colored, styles, bg }: any) => {
   return (
-    <div className={`sliding-row ${styles} pb-12`}>
+    <div className={`sliding-row ${styles}`}>
       <div className="sliding-row-inner">
         {data.concat(data).map((item: string, index: number) => (
           <div

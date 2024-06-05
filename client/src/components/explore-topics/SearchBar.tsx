@@ -16,14 +16,12 @@ const SearchBar = ({data}: SearchBarType) => {
     const {theme} = useTheme()
     const navigate = useNavigate()
 
-    console.log(data)
-
     const topics = useMemo(() => {
         return data.map((item: any) => {return {key: item.id, value: item.name}})
     }, [data])
 
   return (
-    <div className=' w-[40vw] absolute z-10 top-56'>
+    <div className=' w-[80vw] md:w-[40vw] absolute z-10 top-56'>
         <ReactSearchBox
             placeholder="Search topics"
             leftIcon={<IoSearchOutline/>}

@@ -49,12 +49,12 @@ const Navbar = () => {
     }, []);
 
     return (
-        <div className={`flex items-center justify-between px-20 ${authenticated ? 'py-1' : 'py-3' }  border-b-2 bg-white dark:bg-gray-900 dark:border-black`}>
+        <div className={`flex items-center justify-between px-5 md:px-20 ${authenticated ? 'py-1' : 'py-3' }  border-b-2 bg-white dark:bg-gray-900 dark:border-black`}>
             <div className='flex items-center gap-3 cursor-pointer' onClick={() => navigate(`${authenticated ? '/home' : '/'}`)}>
-                <img className='w-18 h-14' src={theme==='dark'?DarkLogo:Logo} alt='' />
-                <h1 className='font-bold text-3xl dark:text-gray-200'>Medium</h1>
+                <img className='w-14 h-12 md:w-16 md:h-14' src={theme==='dark'?DarkLogo:Logo} alt='' />
+                <h1 className='font-bold text-xl md:text-3xl dark:text-gray-200'>Medium</h1>
             </div>
-            <div className='flex items-center gap-8'>
+            <div className='flex items-center gap-4 md:gap-8'>
                 <span className=' flex gap-1 items-center cursor-pointer hover:border-b-2 dark:text-gray-200' onClick={() => {navigate('/new-story', {
                     state: {title: '', data: {}}
                 })}}>
@@ -70,7 +70,7 @@ const Navbar = () => {
                         onClick={() => setShowDropdown(!showDropdown)}
                 />
             </div>
-            {authenticated && showDropdown && <div className='flex flex-col items-start gap-4 pt-4 pb-4 absolute right-10 top-16 bg-white border-2 rounded-md shadow-xl z-20 dark:bg-gray-800 dark:border-black' ref={optionsRef}>
+            {authenticated && showDropdown && <div className='flex flex-col items-start gap-4 pt-4 pb-4 absolute right-4 md:right-10 top-14 md:top-16 bg-white border-2 rounded-md shadow-xl z-20 dark:bg-gray-800 dark:border-black' ref={optionsRef}>
                 <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black dark:text-white'><span>Profile</span></div>
                 <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black dark:text-white'><span>Library</span></div>
                 <div className='px-10 py-1 w-full cursor-pointer text-gray-600 hover:text-black dark:text-white'><span>Settings</span></div>

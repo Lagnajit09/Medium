@@ -73,7 +73,7 @@ const AllTopics = () => {
 
   return (
     <div className="w-full dark:bg-gray-800">
-    <div className="flex flex-col w-[75%] min-h-[80vh] pt-5 mx-auto gap-5">
+    <div className="flex flex-col w-[93%] md:w-[75%] min-h-[80vh] pt-5 mx-auto gap-5">
       <TopBar topics={randomSubtopics} />
       <div className=" flex flex-col w-full gap-5 mt-5 pb-28 items-center justify-center border-b dark:border-gray-700">
         <h1 className=" text-4xl font-bold text-gray-800 dark:text-gray-100">Explore Topics</h1>

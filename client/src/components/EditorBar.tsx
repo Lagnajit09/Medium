@@ -98,12 +98,12 @@ const EditorBar = ({update, id}: EditorBarProps) => {
     }
 
   return (
-    <div className=' w-full mx-auto p-3 flex justify-between px-32 items-center dark:bg-gray-900'>
+    <div className=' w-full mx-auto p-3 flex justify-between px-5 md:px-32 items-center dark:bg-gray-900'>
         <div className=' flex gap-4 items-center'>
             <img src={theme==='dark'?DarkLogo:Logo} alt='logo.svg' className=' w-12 h-12 cursor-pointer' onClick={() => navigate('/home')} />
             <p className=' text-gray-700 dark:text-gray-200'>{(authUser as any).user.name}</p>
         </div>
-        <div className=' flex gap-6 items-center'>
+        <div className=' flex gap-2 items-center'>
 
             <Button title='Publish' onClick={handlePublish} buttonStyles=' bg-green-600 text-white border-2 border-green-600 rounded-full text-sm cursor-pointer hover:bg-white hover:text-green-600' id="publishBtn" />
 

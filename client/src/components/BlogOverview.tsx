@@ -67,7 +67,7 @@ const BlogOverview = ({title, content, author, authorImg, topic, createdAt, id}:
     }
 
   return (
-    <div className="w-[70%] flex mb-10 border-b p-5 dark:border-gray-950 rounded-md dark:bg-gray-700">
+    <div className="w-full md:w-[70%] flex mb-10 border-b p-5 dark:border-gray-950 rounded-md dark:bg-gray-700">
         <div className="left w-[80%] flex flex-col gap-2 pr-10">
             <div className="top w-auto flex text-sm items-center gap-4">
                 <div className="flex items-center gap-2 cursor-pointer">
@@ -102,7 +102,7 @@ const BlogOverview = ({title, content, author, authorImg, topic, createdAt, id}:
                 images.length > 0 ? 
                     <img src={images[0].data.file.url} alt='' width={170} height={170} className=' object-fill bg-slate-400' />
                 :
-                    <div className='bg-gray-100 px-10 py-16 text-center text-gray-400 text-sm dark:bg-gray-600'>No Image</div>
+                <div className='bg-gray-100 px-10 py-12 md:py-16 text-center text-gray-400 text-sm dark:bg-gray-600'>No Image</div>
             }
         </div>
     </div>

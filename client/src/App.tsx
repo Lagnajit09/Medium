@@ -30,7 +30,7 @@ function App() {
   const navigate = useNavigate()
 
   // Use the custom hook for mobile redirection
-    useMobileRedirect();
+    // useMobileRedirect();
 
     // Define the routes where Navbar and Footer should not be displayed
     const noNavFooterRoutes = [

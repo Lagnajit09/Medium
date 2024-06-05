@@ -17,10 +17,10 @@ const Topics = ({topics}: TopicsType) => {
     }, [topics])
     console.log(sortedTopics)
   return (
-    <div className=" flex flex-wrap gap-12 pl-5 mt-10 mb-20">
+    <div className=" flex flex-wrap gap-3 md:gap-12 pl-1 md:pl-5 mt-10 mb-20">
         {
             sortedTopics.map((item:any, index: number) => (
-                 <TopicCard main={item.mainTopic} sub={item.subtopics} key={index} />
+            <TopicCard main={item.mainTopic} sub={item.subtopics} key={index} />
             ))
         }
     </div>

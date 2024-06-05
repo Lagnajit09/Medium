@@ -16,7 +16,7 @@ const TopicCard: React.FC<CardType> = ({ main, sub }) => {
     };
 
     return (
-        <div className='flex flex-col gap-3 w-[30%]'>
+        <div className='flex flex-col gap-3 w-[30%] mb-5 md:mb-0'>
             <div className="text-lg font-semibold cursor-pointer border-b border-white text-gray-800 hover:border-gray-800 w-fit dark:text-gray-200 dark:hover:text-gray-100 dark:border-gray-400 dark:hover:border-gray-200" onClick={() => navigate(`/topic/${main.id}`)}>
                 {main.name}
             </div>

@@ -34,7 +34,7 @@ const Topic = (props: {item:{id:number, name: string, mainTopicId: number}, key:
 
     return (
         <div className={`flex gap-2 items-center border-2 rounded-full px-4 py-2 mx-2 my-1 bg-gray-100 cursor-pointer ${styles}  dark:text-gray-100 dark:border-gray-600`} onClick={() => {setClicked(!clicked)} }  >
-            <p>{props.item.name}</p> 
+            <p className=' whitespace-nowrap'>{props.item.name}</p> 
             {clicked? <PiCheck /> : <PiPlus />}
         </div>
     )
@@ -92,13 +92,13 @@ const SelectTopic = () => {
 
   return (
     <div className=' flex items-start flex-col w-full min-h-full absolute top-0 bg-white p-5 z-50 dark:bg-gray-800'>
-        <div className='mx-auto flex items-center flex-col max-w-[50vw]'>
+        <div className='mx-auto flex items-center flex-col max-w-[90vw] md:max-w-[50vw]'>
             <div className="flex gap-2 items-center">
                 <img className='w-18 h-14' src={theme==='dark'?DarkLogo:Logo} alt='' />
                 <h1 className='font-bold text-3xl dark:text-gray-200'>Medium</h1>
             </div>
 
-            <div className=' flex flex-col items-center my-16'>
+            <div className=' flex flex-col items-center text-center my-16'>
                 <h1 className=' font-semibold text-2xl dark:text-gray-300'>What are you interested in?</h1>
                 <p className='my-3 dark:text-gray-300'>Choose five or more.</p>
             </div>

@@ -9,6 +9,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import { CircularProgress } from '@mui/material'
 import { blogsAtom } from '../store/userAtom';
 import { useTheme } from '../ThemeContext';
+import './styles.css'
 
 interface TopicType {
     id: number;
@@ -77,7 +78,7 @@ const PublishBlog = () => {
 
   return (
     <div className="w-full dark:bg-gray-800">
-    <div className='flex w-[65%] h-screen items-center mx-auto '>
+    <div className='flex w-[95%] md:w-[65%] h-screen items-center mx-auto '>
         <div className='flex flex-col w-[50%] gap-3 h-auto my-auto'>
             <h3 className=' font-bold text-lg text-gray-700 dark:text-gray-200'>Story Preview</h3>
             {
@@ -100,9 +101,9 @@ const PublishBlog = () => {
                 <Select 
                     options={options}
                     values={[]}
-                    style={{width: '60%', border: '2px solid gray', marginTop: '10px', color:theme==='dark' ? 'gray' : 'gray'}}
+                    className='select-container'
+                    style={{ color: theme === 'dark' ? 'lightgray' : 'gray' }}
                     addPlaceholder=''
-                    color={`${theme==='dark' ? 'lightgray' : 'gray'}`}
                     searchBy='label'
                     labelField='label'
                     onChange={(value) => setSelectedTopic(value)}
@@ -114,7 +115,7 @@ const PublishBlog = () => {
                     <Button title='Publish Now' onClick={handlePublish} buttonStyles=' bg-green-600 my-5 text-white border-2 border-green-600 rounded-full text-sm cursor-pointer hover:bg-white hover:text-green-600' id="publishBtn"  />
                 }
             </div>
-            <div className=' w-[7%] h-[5%] mx-auto text-4xl mt-12 cursor-pointer' onClick={() => navigate('/new-story', {
+            <div className=' w-[7%] h-[5%] mx-auto text-4xl mt-32 mr-5 cursor-pointer' onClick={() => navigate('/new-story', {
                 state: state
             })}><IoCloseOutline className='dark:text-gray-200' /></div>
         </div>

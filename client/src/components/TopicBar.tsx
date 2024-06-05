@@ -10,7 +10,7 @@ const TopicBar = () => {
     const {theme} = useTheme()
 
   return (
-    <div className='w-[70%] flex gap-5 overflow-scroll scrollbar-hide border-b border-gray-300 mb-10 dark:border-gray-950'>
+    <div className='w-[95%] md:w-[70%] flex gap-2 md:gap-5 overflow-scroll scrollbar-hide border-b border-gray-300 mb-10 dark:border-gray-950'>
     <div className=' text-black w-12 h-12 p-2 pr-0'><PiPlusCircleThin style={{width:'25px', height: '25px', cursor: 'pointer', color: theme==='dark' ? 'white' : 'black'}}
       onClick={() => navigate('/all-topics')}
     /></div>

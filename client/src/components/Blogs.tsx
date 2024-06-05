@@ -30,7 +30,7 @@ const Blogs = () => {
 
   if(loading) {
   return(       
-  <div className=' w-[70%] mt-16 pl-20 mb-10'>
+  <div className=' w-[95%] md:w-[70%] mt-16 pl-6 md:pl-20 mb-10'>
     <Skeleton variant='rectangular' className=' rounded-3xl w-full h-1' height={5} />
     <BlogSkeleton />
     <BlogSkeleton />

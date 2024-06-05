@@ -51,7 +51,7 @@ const home = () => {
   return (
     <div className="w-full bg-white dark:bg-gray-800">
 
-      <div className='min-h-[82.5vh] flex w-[80%] mx-auto'>
+      <div className='min-h-[82.5vh] flex w-[97%] md:w-[80%] mx-auto'>
       <Blogs/>
       <HomeRight/>
       </div>
