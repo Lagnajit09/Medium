@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import  { useEffect, useMemo, useState } from 'react'
 import Logo from '../../assets/logo.svg'
 import DarkLogo from "../../assets/logo-dark.svg"
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { PiPlus } from "react-icons/pi";
 import { PiCheck } from "react-icons/pi";
 import { fetchAllTopics, updateUserTopics } from '../../handlers/userHandlers';
@@ -10,7 +10,6 @@ import { loadingAtom } from '../../store/loader';
 import Loading from '../../components/Loading';
 import { userTopicsAtom } from '../../store/userAtom'
 import { authUserAtom } from '../../store/authAtom';
-import { createSessiomWithSecretandID } from '../../appwrite';
 import { useTheme } from '../../ThemeContext';
 
 const Topic = (props: {item:{id:number, name: string, mainTopicId: number}, key:number, selected: any, setSelected: Function}) => {

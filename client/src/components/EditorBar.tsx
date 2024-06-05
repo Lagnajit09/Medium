@@ -8,7 +8,7 @@ import Button from './Button'
 import { LuShare } from "react-icons/lu";
 import { editorInstanceAtom, userBlogsAtom } from "../store/userAtom"
 import { useState } from "react"
-import { publishUserBlog, saveUserBlog, updateUserBlog } from "../handlers/userHandlers"
+import { saveUserBlog, updateUserBlog } from "../handlers/userHandlers"
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../ThemeContext"
 

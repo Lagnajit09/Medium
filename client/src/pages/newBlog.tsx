@@ -1,7 +1,6 @@
 import EditorBar from '../components/EditorBar'
 import Editor from '../components/Editor'
-import { useLocation, useParams } from 'react-router-dom'
-import { useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom'
 
 const NewBlog = () => {
   const {state} = useLocation();

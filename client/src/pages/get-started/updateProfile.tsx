@@ -7,12 +7,12 @@ import { updateProfileDB } from '../../handlers/userHandlers';
 import { useNavigate } from 'react-router-dom';
 import { storage } from '../../firebase';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { authUserAtom } from '../../store/authAtom';
 import { useTheme } from '../../ThemeContext';
 
 const UpdateProfile = () => {
-    const [authUser, setAuthUser] = useRecoilState(authUserAtom)
+    const setAuthUser = useSetRecoilState(authUserAtom)
     const [bio, setBio] = useState('');
     const navigate = useNavigate()
     const [imageSrc, setImageSrc] = useState<string>('');
@@ -41,6 +41,7 @@ const UpdateProfile = () => {
             'state_changed',
             (snapshot) => {
                 // Progress handler (optional)
+                console.log(snapshot)
             },
             (error) => {
                 console.error('Upload failed', error);

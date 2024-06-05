@@ -20,7 +20,7 @@ const Topics = ({topics}: TopicsType) => {
     <div className=" flex flex-wrap gap-12 pl-5 mt-10 mb-20">
         {
             sortedTopics.map((item:any, index: number) => (
-                 <TopicCard main={item.mainTopic} sub={item.subtopics} />
+                 <TopicCard main={item.mainTopic} sub={item.subtopics} key={index} />
             ))
         }
     </div>

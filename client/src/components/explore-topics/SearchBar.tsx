@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import  { useMemo } from 'react'
 import ReactSearchBox from "react-search-box";
 import { IoSearchOutline } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';

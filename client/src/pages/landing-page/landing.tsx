@@ -25,16 +25,7 @@ const programmingLanguages: string[] = [
   "Python",
   "React",
   "Ruby",
-  "Typescript"
-];
-
-const blockchain: string[] = [
-  "Bitcoin",
-  "Cryptocurrency",
-  "Decentralized Finance",
-  "Ethereum",
-  "Nft",
-  "Web3"
+  "Typescript",
 ];
 
 const dataScience: string[] = [
@@ -127,7 +118,7 @@ interface NavbarPropsTypes {
 
 export const Card = ({setShowSignIn, setShowSignUp}: NavbarPropsTypes) => {
   return (
-    <div className=" absolute flex flex-col z-10 flex text-center items-center top-[20%] left-[31%]">
+    <div className=" absolute flex flex-col z-10 flex text-center items-center top-[20%] left-0 right-0">
       <h2 className=' w-fit text-white p-5 text-6xl backdrop-blur-lg border border-transparent rounded-t-2xl' >Human</h2>
       <h2 className=' w-fit text-white p-5 text-6xl backdrop-blur-lg border border-transparent rounded-full' >Stories and Ideas</h2>
       <p className='text-white py-4 px-3 backdrop-blur-lg border border-transparent rounded-b-xl'>A place to read, write, and deepen your understanding</p>

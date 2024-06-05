@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { userTopicsAtom } from '../store/userAtom'
-import { useRecoilState, useRecoilValue } from 'recoil'
-import { fetchRecommendedTopics } from '../handlers/userHandlers';
+import { useRecoilValue } from 'recoil'
 import { useNavigate } from 'react-router-dom';
 import { Recommended } from './Recommended';
 import Button from './Button';
@@ -10,7 +9,7 @@ import { IoCloseOutline } from 'react-icons/io5';
 const HomeRight = () => {
 
     const userTopics = useRecoilValue(userTopicsAtom)
-    const [recommended, setRecommended] = useState([1,2,3,4,5,6,7])
+    const [recommended, setRecommended] = useState<any>(['1','2','3','4','5','6','7'])
     const [loading, setLoading] = useState(true)
     const [showFAQ, setShowFAQ] = useState(true)
     const navigate = useNavigate()
@@ -18,8 +17,9 @@ const HomeRight = () => {
     useEffect(() => {
         const fetchRecommendations = async () => {
         try {
-            const rTopics = await fetchRecommendedTopics();
-            setRecommended(rTopics)
+            // const rTopics = await fetchRecommendedTopics();
+            const demo = [{name:'AI', id:1},{name:'Health', id:1},{name:'Business', id:1},{name:'Web3', id:1},{name:'DevOps', id:1},{name:'Generative Art', id:1},{name:'JAVA', id:1}]
+            setRecommended(demo)
             setLoading(false)
         } catch (error) {
             setLoading(true)  
@@ -60,7 +60,7 @@ const HomeRight = () => {
         <div className='mt-10'>
             <p className=' font-semibold text-base text-gray-700 dark:text-gray-300'>Recommended Topics</p>
             <div className=' flex flex-wrap items-center justify-start mt-3'>
-                {!loading && recommended.map((rt, index) => <Recommended topic={rt} key={index} loading={loading} />)}
+                {!loading && recommended.map((rt:any, index:number) => <Recommended topic={rt} key={index} loading={loading} />)}
             </div>
             <div className=' flex gap-2 items-center text-sm mt-5 ml-2 cursor-pointer hover:text-gray-800 w-32 text-green-700 dark:text-green-500'
                 onClick={() => navigate('/all-topics')}

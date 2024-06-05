@@ -1,4 +1,3 @@
-import React from 'react'
 
 const items = ['Help', 'Status', 'About', 'Careers', 'Press', 'Blog', 'Privacy', 'Terms', 'Text to Speech', 'Teams']
 

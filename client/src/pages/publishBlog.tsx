@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { fetchAllTopics, publishUserBlog } from '../handlers/userHandlers';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -82,7 +82,7 @@ const PublishBlog = () => {
             <h3 className=' font-bold text-lg text-gray-700 dark:text-gray-200'>Story Preview</h3>
             {
                 images.length > 0 ? 
-                    <img src={images[0].data.file.url} alt='' width={400} height={200} className=' object-contain' />
+                    <img src={images[0].data.file.url} alt='' width={400} height={200} className=' object-contain w-[80%] h-48 bg-gray-500' />
                 :
                     <div className=' w-[80%] bg-gray-100 px-8 py-20 text-center text-gray-400 text-sm dark:bg-gray-600 rounded-md'>Include a high-quality image in your story to make it more inviting to readers.</div>
             }
@@ -100,9 +100,9 @@ const PublishBlog = () => {
                 <Select 
                     options={options}
                     values={[]}
-                    style={{width: '60%', border: '2px solid gray', marginTop: '10px', color:theme==='dark' ? 'white' : 'gray'}}
+                    style={{width: '60%', border: '2px solid gray', marginTop: '10px', color:theme==='dark' ? 'gray' : 'gray'}}
                     addPlaceholder=''
-                    color={`${theme==='dark' ? 'white' : 'gray'}`}
+                    color={`${theme==='dark' ? 'lightgray' : 'gray'}`}
                     searchBy='label'
                     labelField='label'
                     onChange={(value) => setSelectedTopic(value)}

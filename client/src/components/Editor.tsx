@@ -81,7 +81,6 @@ const Editor = ({data, fetchedTitle, read}:EditorProps) => {
                   });
                 },
               },
-              onchange: (api:any, event:any) => console.log(event.type)
             },
           },
           code: {

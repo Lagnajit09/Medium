@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler, HTMLInputTypeAttribute } from 'react'
+import { ChangeEventHandler, HTMLInputTypeAttribute } from 'react'
 
 interface inputType  {
     type: HTMLInputTypeAttribute;

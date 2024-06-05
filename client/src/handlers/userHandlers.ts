@@ -125,7 +125,6 @@ export const fetchRecommendedTopics = async () => {
 //method to fetch blogs for home page
 export const fetchHomeBlogs = async () => {
     const jwt = localStorage.getItem('medium-token');
-    const userId = localStorage.getItem('medium-userId');
     try {
         const response = await fetch(`${SERVER}/api/v1/blog/post/followed-posts`, {
             headers: {
@@ -146,7 +145,6 @@ export const fetchHomeBlogs = async () => {
 //method to save user blog
 export const saveUserBlog = async (postData: any) => {
     const jwt = localStorage.getItem('medium-token');
-    const userId = localStorage.getItem('medium-userId');
     try {
         const response = await fetch(`${SERVER}/api/v1/blog/post/save`, {
             method: "POST",
@@ -171,7 +169,6 @@ export const saveUserBlog = async (postData: any) => {
 //method to save user blog
 export const publishUserBlog = async (title: string, content: any, topic: any) => {
     const jwt = localStorage.getItem('medium-token');
-    const userId = localStorage.getItem('medium-userId');
     try {
         const response = await fetch(`${SERVER}/api/v1/blog/post/publish`, {
             method: "POST",
@@ -227,7 +224,6 @@ export const updateUserBlog = async (postData: any, id: number, topic: number) =
 //fetch a blog by id
 export const fetchBlogByID = async (id:number) => {
     const jwt = localStorage.getItem('medium-token');
-    const userId = localStorage.getItem('medium-userId');
     try {
         const response = await fetch(`${SERVER}/api/v1/blog/post/${id}`, {
             headers: {
