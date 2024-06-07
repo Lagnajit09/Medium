@@ -28,10 +28,6 @@ const BlogOverview = ({title, content, author, authorImg, topic, createdAt, id}:
         return JSON.parse(content)
     }, [content])
 
-    console.log(id)
-
-    console.log(parsedContent)
-
     const date = useMemo(() => {
         const date = new Date(createdAt);
         const options: Intl.DateTimeFormatOptions = { 
@@ -71,21 +67,26 @@ const BlogOverview = ({title, content, author, authorImg, topic, createdAt, id}:
         <div className="left w-[80%] flex flex-col gap-2 pr-10">
             <div className="top w-auto flex text-sm items-center gap-4">
                 <div className="flex items-center gap-2 cursor-pointer">
-                    <Avatar className='cursor-pointer font-semibold'
-                        sx={{ bgcolor: theme==='dark' ? grey[900] : grey[800] }} src={authorImg ? authorImg : '../broken-img.png'} alt={author.toUpperCase()} style={{width: '25px', height: '25px', fontSize: '14px'}} />
-                    <p  className=" dark:text-gray-200">{author}</p>
+                    <Avatar 
+                        className='cursor-pointer font-semibold'
+                        sx={{ bgcolor: theme==='dark' ? grey[900] : grey[800] }} 
+                        src={authorImg ? authorImg : '../broken-img.png'} 
+                        alt={author.toUpperCase()} 
+                        style={{width: '25px', height: '25px', fontSize: '14px'}} 
+                    />
+                    <p className=" dark:text-gray-200">{author}</p>
                 </div>
                 <p className=" text-xs text-gray-400">{date}</p>
             </div>
             <div className="medium cursor-pointer" onClick={() => navigate(`/blog/${id.blog}`, {
                 state: {
+                    id: id.blog,
                     title,
                     content: parsedContent,
+                    createdAt,
                     author: {
-                        author, 
-                        authorImg, 
-                        readTime:minsToRead(), 
-                        createdAt: date
+                        name: author, 
+                        image: authorImg, 
                     }
                 }
             })}>

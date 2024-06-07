@@ -26,8 +26,6 @@ const Blogs = () => {
     fetchBlogs()
   }, []);
 
-  console.log(blogs)
-
   if(loading) {
   return(       
   <div className=' w-[95%] md:w-[70%] mt-16 pl-6 md:pl-20 mb-10'>
