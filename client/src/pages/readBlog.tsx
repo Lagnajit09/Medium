@@ -41,7 +41,12 @@ const ReadBlog = () => {
     
   return (
     <div className='min-h-[82.5vh] bg-white overflow-x-hidden dark:bg-gray-800'>
-        <BlogAuthorDetail data={data.author} createdAt={data.createdAt} len={blogContent().length + data.title.length} />
+        <BlogAuthorDetail 
+          id={data.id}
+          author={data.author} 
+          createdAt={data.createdAt} 
+          len={blogContent().length + data.title.length} 
+        />
         <Editor data={data.content} fetchedTitle={data.title} read={true} />
     </div>
   )

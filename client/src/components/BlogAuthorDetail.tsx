@@ -4,11 +4,14 @@ import { grey } from '@mui/material/colors'
 import { FaRegComment } from "react-icons/fa6";
 import { LuShare } from "react-icons/lu";
 import { FaRegBookmark } from "react-icons/fa6";
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import ShareBlog from './ShareBlog';
+import { CLIENT } from '../config';
 
 
 interface blogAuthorDataType {
-    data: {
+    id:number,
+    author: {
         name: string,
         image: string,
     },
@@ -16,9 +19,11 @@ interface blogAuthorDataType {
     len: number
 }
 
-const BlogAuthorDetail = ({data: {name, image}, createdAt, len}:blogAuthorDataType) => {
+const BlogAuthorDetail = ({id, author: {name, image}, createdAt, len}:blogAuthorDataType) => {
 
     const {theme} = useTheme()
+    const [showShareOpts, setShowShareOpts] = useState(false)
+    const shareOptsRef = useRef<HTMLDivElement>(null);
 
     const date = useMemo(() => {
         const date = new Date(createdAt);
@@ -39,6 +44,25 @@ const BlogAuthorDetail = ({data: {name, image}, createdAt, len}:blogAuthorDataTy
         else return `${Math.round(readingTime)} min read`
     }
 
+    const handleClickOutside = (event: MouseEvent) => {
+        if (shareOptsRef.current && !shareOptsRef.current.contains(event.target as Node)) {
+            setShowShareOpts(false);
+        }
+    };
+
+    const handleScroll = () => {
+        setShowShareOpts(false);
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
   return (
     <div className='flex flex-col w-[90%] md:w-[48%] mx-auto mt-10 '>
         <div className=" flex gap-3 items-center pb-4 border-b border-gray-200 dark:border-gray-600">
@@ -56,12 +80,17 @@ const BlogAuthorDetail = ({data: {name, image}, createdAt, len}:blogAuthorDataTy
                 </div>
             </div>
         </div>
-        <div className=" flex justify-between px-4 py-4 text-xl text-gray-600 dark:text-gray-100 border-b border-gray-200 dark:border-gray-600">
+        <div className=" flex justify-between px-4 py-4 text-xl text-gray-600 dark:text-gray-100 border-b border-gray-200 dark:border-gray-600 relative">
             <FaRegComment className='cursor-pointer' />
             <div className=" flex gap-6">
                 <FaRegBookmark className='cursor-pointer' />
-                <LuShare className='cursor-pointer' />
+                <LuShare className='cursor-pointer' onClick={() => setShowShareOpts(true)} />
             </div>
+            {showShareOpts && 
+                <div className=" absolute -right-5 md:-right-20 top-12" ref={shareOptsRef}>
+                    <ShareBlog copyLink={`${CLIENT}/blog/${id}`} />
+                </div>
+            }
         </div>
     </div>
   )
