@@ -110,11 +110,11 @@ export const fetchRecommendedTopics = async () => {
 
         const data = await response.json();
 
-        if(response.status === 404) {
+        if(response.status === 405) {
             console.error('User not found!')
             return {}
         }
-
+        console.log(data)
         return data;
     } catch (error) {
         console.error('Failed to fetch recommended topics!')

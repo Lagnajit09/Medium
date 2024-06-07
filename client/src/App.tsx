@@ -18,19 +18,14 @@ import TopicPosts from './pages/topicPosts'
 import UpdateProfile from './pages/get-started/updateProfile'
 import ReadBlog from './pages/readBlog'
 import { ThemeProvider } from './ThemeContext';
-import useMobileRedirect from './hooks/useMobileRedirect'
 
 function App() {
   const  setAuthUser = useSetRecoilState(authUserAtom)
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
-  // const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useRecoilState(loadingAtom);
   const location = useLocation();
   const navigate = useNavigate()
-
-  // Use the custom hook for mobile redirection
-    // useMobileRedirect();
 
     // Define the routes where Navbar and Footer should not be displayed
     const noNavFooterRoutes = [
@@ -79,16 +74,6 @@ function App() {
     return <Loading /> // Display a loading indicator while checking authentication
   }
 
-
-  const MobileView: React.FC = () => (
-    <div className="bg-gray-800 text-center w-full flex items-center justify-center">
-      <h1 className="text-white text-sm max-w-xs mx-auto break-words">
-        The Medium isn't currently available on Mobile devices.
-      </h1>
-    </div>
-  );
-
-
   return (
     <>
         {!loading && !hideNavFooter &&
@@ -96,7 +81,6 @@ function App() {
         }
           {!loading && 
           <Routes>
-            <Route path="/mobile-view" element={<MobileView />} />
              <Route path="/" 
               element={
                 <Landing showSignIn={showSignIn} showSignUp={showSignUp} setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn} /> 

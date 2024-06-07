@@ -672,99 +672,79 @@ blogRouter.get('/:userId/recommended-topics', async (c) => {
     }).$extends(withAccelerate());
   
     try {
-      // Fetch the user's followed topics
-      const userWithTopics = await prisma.user.findUnique({
-        where: {
-          id: userId,
-        },
-        select: {
-          topics: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      });
-  
-      if (!userWithTopics) {
-        c.status(404)
-        return c.json({ message: 'User not found' });
-      }
-  
-      const followedTopicIds = userWithTopics.topics.map(topic => topic.id);
-  
-      // Fetch all topics excluding the followed topics
-      const allTopics = await prisma.topic.findMany({
-        where: {
-          id: {
-            notIn: followedTopicIds,
-          },
-        },
-      });
-  
-      // Fetch current recommended topics for the user
-      let recommendedTopics = await prisma.recommendedTopic.findMany({
-        where: {
-          userId: userId,
-        },
-        include: {
-          topic: true,
-        },
-      });
-  
-      // If recommended topics are less than 7, add more topics
-      if (recommendedTopics.length < 7) {
-        const topicsToAdd = allTopics.filter(
-          topic => !recommendedTopics.some(rt => rt.topicId === topic.id)
-        );
-  
-        const newRecommendedTopics = topicsToAdd.slice(0, 7 - recommendedTopics.length).map(topic => ({
-          userId: userId,
-          topicId: topic.id,
-        }));
-  
-        await prisma.recommendedTopic.createMany({
-          data: newRecommendedTopics,
+        // Step 1: Find user's followed topics
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                topics: true
+            }
         });
-  
-        recommendedTopics = await prisma.recommendedTopic.findMany({
-          where: {
-            userId: userId,
-          },
-          include: {
-            topic: true,
-          },
+
+        if (!user) {
+            c.status(404);
+            return c.json({ error: 'User not found' });
+        }
+
+        const followedTopicIds = user.topics.map(topic => topic.id);
+        const followedMainTopicIds = user.topics.map(topic => topic.mainTopicId);
+
+        // Step 2: Find user's current recommended topics from the recommendation table
+        const currentRecommendations = await prisma.recommendedTopic.findMany({
+            where: { userId },
+            include: { topic: true }
         });
-      }
-  
-      // Ensure there are exactly 7 recommended topics
-      if (recommendedTopics.length > 7) {
-        const excessTopics = recommendedTopics.slice(7);
-  
+
+        // Step 3: Find the respective mainTopics of user followed topics
+        const mainTopics = await prisma.mainTopic.findMany({
+            where: { id: { in: followedMainTopicIds } },
+            include: { topics: true }
+        });
+
+        // Step 4: Check which sub-topics of main topics are not followed by the user
+        let newRecommendedTopics = Array()
+        for (const mainTopic of mainTopics) {
+            const notFollowedTopics = mainTopic.topics.filter(topic => !followedTopicIds.includes(topic.id));
+            if (notFollowedTopics.length > 0) {
+                // Get one or two topics from each main topic
+                const selectedTopics = notFollowedTopics.slice(0, 2);
+                newRecommendedTopics = newRecommendedTopics.concat(selectedTopics);
+            }
+        }
+
+        // Step 5: If we have fewer than 7 topics, fill with random topics
+        if (newRecommendedTopics.length < 7) {
+            const allTopics = await prisma.topic.findMany({
+                where: {
+                    id: { notIn: followedTopicIds }
+                }
+            });
+            const remainingTopics = allTopics.sort(() => 0.5 - Math.random()).slice(0, 7 - newRecommendedTopics.length);
+            newRecommendedTopics = newRecommendedTopics.concat(remainingTopics);
+        } else {
+            // Shuffle and take the first 7 if we have more than 7 topics
+            newRecommendedTopics = newRecommendedTopics.sort(() => 0.5 - Math.random()).slice(0, 7);
+        }
+
+        // Step 6: Delete current recommended topics
         await prisma.recommendedTopic.deleteMany({
-          where: {
-            id: {
-              in: excessTopics.map(topic => topic.id),
-            },
-          },
+            where: { userId }
         });
-  
-        recommendedTopics = await prisma.recommendedTopic.findMany({
-          where: {
-            userId: userId,
-          },
-          include: {
-            topic: true,
-          },
+
+        // Step 7: Store new recommended topics in the table
+        const recommendationsToCreate = newRecommendedTopics.map(topic => ({
+            userId,
+            topicId: topic.id
+        }));
+
+        await prisma.recommendedTopic.createMany({
+            data: recommendationsToCreate
         });
-      }
-  
-      return c.json(recommendedTopics.map(rt => rt.topic));
+
+        return c.json(newRecommendedTopics);
     } catch (error) {
-      console.error(error);
-      c.status(500)
-      return c.json({ message: 'Internal server error' });
+        console.error('Error generating recommendations:', error);
+        c.status(500);
+        return c.json({ error: 'Failed to generate recommendations' });
     }
   });
 

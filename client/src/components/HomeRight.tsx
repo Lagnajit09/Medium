@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Recommended } from './Recommended';
 import Button from './Button';
 import { IoCloseOutline } from 'react-icons/io5';
+import { fetchRecommendedTopics } from '../handlers/userHandlers';
 
 const HomeRight = () => {
 
@@ -17,9 +18,9 @@ const HomeRight = () => {
     useEffect(() => {
         const fetchRecommendations = async () => {
         try {
-            // const rTopics = await fetchRecommendedTopics();
-            const demo = [{name:'AI', id:1},{name:'Health', id:1},{name:'Business', id:1},{name:'Web3', id:1},{name:'DevOps', id:1},{name:'Generative Art', id:1},{name:'JAVA', id:1}]
-            setRecommended(demo)
+            const rTopics = await fetchRecommendedTopics();
+            // const demo = [{name:'AI', id:1},{name:'Health', id:1},{name:'Business', id:1},{name:'Web3', id:1},{name:'DevOps', id:1},{name:'Generative Art', id:1},{name:'JAVA', id:1}]
+            setRecommended(rTopics)
             setLoading(false)
         } catch (error) {
             setLoading(true)  
