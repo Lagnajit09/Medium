@@ -80,7 +80,13 @@ const BlogOverview = ({title, content, author, authorImg, topic, createdAt, id}:
             <div className="medium cursor-pointer" onClick={() => navigate(`/blog/${id.blog}`, {
                 state: {
                     title,
-                    content: parsedContent
+                    content: parsedContent,
+                    author: {
+                        author, 
+                        authorImg, 
+                        readTime:minsToRead(), 
+                        createdAt: date
+                    }
                 }
             })}>
                 <h2 className=" dark:text-gray-200">{title}</h2>

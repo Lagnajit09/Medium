@@ -1,3 +1,4 @@
+import BlogAuthorDetail from '../components/BlogAuthorDetail';
 import Editor from '../components/Editor'
 import { useLocation } from 'react-router-dom'
 
@@ -9,7 +10,7 @@ const ReadBlog = () => {
     
   return (
     <div className='min-h-[82vh] bg-white overflow-x-hidden dark:bg-gray-800'>
-
+        <BlogAuthorDetail data={state.author} />
         <Editor data={state.content} fetchedTitle={state.title} read={true} />
     </div>
   )
