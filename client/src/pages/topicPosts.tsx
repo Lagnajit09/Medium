@@ -1,9 +1,20 @@
-import { useEffect, useState } from "react"
-import { useLocation, useParams } from "react-router-dom"
-import { fetchTopicPosts } from "../handlers/userHandlers"
+import { useEffect, useMemo, useState } from "react"
+import { useParams } from "react-router-dom"
+import { fetchTopicPosts, fetchUserTopics } from "../handlers/userHandlers"
 import TopicHeader from "../components/TopicPosts/TopicHeader"
 import Loading from "../components/Loading";
 import TopicBody from "../components/TopicPosts/TopicPosts";
+import { useSetRecoilState } from "recoil";
+import { userTopicsAtom } from "../store/userAtom";
+
+export interface userType {
+    id: string,
+    name: string,
+    email:  string,
+    password:  string,
+    bio:  string,
+    image:  string
+}
 
 export interface postType {
   id: number,
@@ -13,29 +24,37 @@ export interface postType {
   createdAt: string,
   authorId: string,
   topicId: number,
-  author: {
-    id: string,
-    name: string,
-    email:  string,
-    password:  string,
-    bio:  string,
-    image:  string
-  }
+  author: userType
+}
+
+export interface topicType {
+  id: number;
+  name: string;
+  mainTopicId: number;
 }
 
 interface TopicsType {
-  topic: {
-    id: number;
-    name: string;
-    userCount: number;
-  },
+  topic: topicType
   posts: Array<postType>
+  users: Array<userType>
+  userCount: number;
+
 }
 
 const TopicPosts = () => {
   const {id} = useParams()
-  const [topicData, setTopicData] = useState<TopicsType>()
+  const [topicData, setTopicData] = useState<TopicsType>({
+    topic: {
+      id: 0,
+      name: '',
+      mainTopicId: -1
+    },
+    posts: [],
+    users: [],
+    userCount: 0
+  })
   const [loading, setLoading] = useState<boolean>(false)
+  const setUserTopics = useSetRecoilState(userTopicsAtom)
 
   useEffect(() => {
 
@@ -44,7 +63,8 @@ const TopicPosts = () => {
       setLoading(true)
       try {
         const data = await fetchTopicPosts(id)
-        console.log(data)
+        const followedTopics = await fetchUserTopics()
+        setUserTopics(followedTopics)
         setTopicData(data[0])
       } catch (error) {
         console.log(error)
@@ -60,7 +80,7 @@ const TopicPosts = () => {
 
   return (
     <div className=" w-full min-h-[82.5vh] dark:bg-gray-800">
-      <TopicHeader topic={topicData?.topic} userCount={topicData?.topic.userCount} totalPosts={topicData?.posts.length} />
+      <TopicHeader topic={topicData.topic} userCount={topicData?.userCount || 0} totalPosts={topicData?.posts.length || 0} />
       <TopicBody posts={topicData?.posts} />
     </div>
   )

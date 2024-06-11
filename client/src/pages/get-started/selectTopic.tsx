@@ -4,8 +4,8 @@ import DarkLogo from "../../assets/logo-dark.svg"
 import { useNavigate } from 'react-router-dom'
 import { PiPlus } from "react-icons/pi";
 import { PiCheck } from "react-icons/pi";
-import { fetchAllTopics, updateUserTopics } from '../../handlers/userHandlers';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { fetchAllTopics, fetchUserTopics, updateUserTopics } from '../../handlers/userHandlers';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { loadingAtom } from '../../store/loader';
 import Loading from '../../components/Loading';
 import { userTopicsAtom } from '../../store/userAtom'
@@ -16,7 +16,7 @@ const Topic = (props: {item:{id:number, name: string, mainTopicId: number}, key:
 
     const [clicked, setClicked] = useState(false);
 
-    if(props.item.id===70000) return
+    if(props.item.id===70000) return;
 
     useEffect(() => {
         if(clicked) {
@@ -46,8 +46,10 @@ const SelectTopic = () => {
     const [selected, setSelected] = useState([]);
     const [loading, setLoading] = useRecoilState(loadingAtom)
     const navigate = useNavigate();
-    const setUserTopics = useSetRecoilState(userTopicsAtom)
+    const [userTopics, setUserTopics] = useRecoilState(userTopicsAtom)
     const {theme} = useTheme()
+
+    if(userTopics.length > 0) navigate('/home')
 
     const buttonStyle = useMemo(() => {
         return selected.length < 5 ? 'bg-gray-100 text-gray-400' : 'bg-black text-white cursor-pointer dark:bg-gray-200 dark:text-black'
@@ -73,9 +75,11 @@ const SelectTopic = () => {
 
             try {
                 const fetchedAllTopics = await fetchAllTopics();
-                if(!fetchedAllTopics) throw Error;
+                const followedTopics = await fetchUserTopics()
+                if(!fetchedAllTopics || !followedTopics) throw Error;
 
                 setAllTopics(fetchedAllTopics)
+                setUserTopics(followedTopics)
 
             } catch (error) {
                 console.log(error)

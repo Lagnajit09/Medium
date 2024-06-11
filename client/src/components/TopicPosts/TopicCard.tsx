@@ -19,9 +19,7 @@ const TopicCard = ({post}:{post?:postType}) => {
     const navigate = useNavigate()
     const { theme } = useTheme();
 
-    if(!post) return <>Loading...</>
-
-    console.log(post)
+    if(!post) return <>No posts available!</>
 
     const parsedContent = useMemo(() => {
         return JSON.parse(post.content)

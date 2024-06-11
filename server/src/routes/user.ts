@@ -135,6 +135,8 @@ userRouter.post('/signin', async (c) => {
         }
 })
 
+
+//update user
 userRouter.put('/update', async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,

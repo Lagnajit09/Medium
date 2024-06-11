@@ -17,7 +17,13 @@ export const userBlogsAtom = atom({
   default: [],
 });
 
-export const userTopicsAtom = atom({
+interface topicType {
+  id: number;
+  name: string;
+  mainTopicId: number;
+}
+
+export const userTopicsAtom = atom<topicType[]>({
   key: "userTopicsAtom",
   default: [],
 });

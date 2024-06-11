@@ -145,6 +145,7 @@ const Editor = ({data, fetchedTitle, read}:EditorProps) => {
                   setTitle(e.target.value); 
                   updateBtnText();
                 }} 
+                maxLength={50}
             disabled={read}
           >{title}</textarea>
       <div id="editorjs" className=" my-4 p-4 text-gray-800 dark:text-gray-200"></div>

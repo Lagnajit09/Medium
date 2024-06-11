@@ -51,3 +51,12 @@ h2 {
   background: rgba(0, 0, 0, 0.3); /* Color of the scrollbar thumb */
   border-radius: 10px; /* Radius of the scrollbar thumb */
 }
+
+/* Dark theme scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #333; /* Darker background for dark theme */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3); /* Lighter color for dark theme */
+}

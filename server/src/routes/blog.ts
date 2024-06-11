@@ -252,6 +252,9 @@ blogRouter.get('/post/followed-posts', async (c) => {
             include: {
                 posts: {
                     where: { published: true },
+                    orderBy: {
+                        createdAt: 'desc'
+                    },
                     include: {
                         author: {
                             select: {
@@ -657,9 +660,10 @@ blogRouter.get('/topics/:id', async (c) => {
                     topic: {
                         id: topic.id,
                         name: topic.name,
-                        userCount: topic.users.length
+                        mainTopicId: topic.mainTopicId,
                     },
                     posts: topic.posts,
+                    userCount: topic.users.length,
                     users: topic.users
                 });
             });
@@ -684,10 +688,10 @@ blogRouter.get('/topics/:id', async (c) => {
                     topic: {
                         id: topic.id,
                         name: topic.name,
-                        userCount: topic.users.length
-
+                        mainTopicId: topic.mainTopicId
                     },
                     posts: topic.posts,
+                    userCount: topic.users.length,
                     users: topic.users
                 });
             }
