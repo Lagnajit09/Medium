@@ -239,7 +239,6 @@ blogRouter.get('/post/user-posts', async (c) => {
 
 //get blogs of user-followed topics
 blogRouter.get('/post/followed-posts', async (c) => {
-
     const userId = c.get('userId');
 
     const prisma = new PrismaClient({
@@ -247,16 +246,32 @@ blogRouter.get('/post/followed-posts', async (c) => {
     }).$extends(withAccelerate());
 
     try {
-          // Find the user by userId and include their followed topics and posts with author and topic details
+        // Find the user by userId and include their followed topics and posts with author and topic details
         const user = await prisma.user.findUnique({
             where: { id: userId },
             include: {
+                posts: {
+                    where: { published: true },
+                    include: {
+                        author: {
+                            select: {
+                                name: true,
+                                email: true,
+                                image: true
+                            }
+                        },
+                        topic: {
+                            select: {
+                                id: true,
+                                name: true
+                            }
+                        }
+                    }
+                },
                 topics: {
                     include: {
                         posts: {
-                            where: {
-                                published: true
-                            },
+                            where: { published: true },
                             include: {
                                 author: {
                                     select: {
@@ -297,28 +312,34 @@ blogRouter.get('/post/followed-posts', async (c) => {
             };
         };
 
-        // Extract posts from user's followed topics with topic details
-        let posts: PostWithDetails[] = [];
+        // Extract posts from user's own posts and followed topics' posts
+        let posts: PostWithDetails[] = user ? [...user.posts] : [];
+
         if (user) {
-            posts = user.topics.reduce((allPosts: PostWithDetails[], topic) => {
-                const topicPosts = topic.posts.map(post => ({
-                    ...post,
-                    topic: {
-                        id: topic.id,
-                        name: topic.name
+            user.topics.forEach(topic => {
+                topic.posts.forEach(post => {
+                    if (!posts.some(existingPost => existingPost.id === post.id)) {
+                        posts.push({
+                            ...post,
+                            topic: {
+                                id: topic.id,
+                                name: topic.name
+                            }
+                        });
                     }
-                }));
-                return allPosts.concat(topicPosts);
-            }, []);
+                });
+            });
         }
-    
+
         return c.json(posts);
-      } catch (error) {
+    } catch (error) {
         console.error('Error fetching posts for followed topics:', error);
-        c.status(500)
+        c.status(500);
         return c.json({ error: 'Failed to fetch posts for followed topics' });
-      }
-})
+    } finally {
+        await prisma.$disconnect(); // Ensure the Prisma client is properly disconnected
+    }
+});
 
 
 //get a particular blog
