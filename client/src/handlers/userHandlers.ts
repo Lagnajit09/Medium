@@ -240,6 +240,28 @@ export const fetchBlogByID = async (id:number) => {
 } 
 
 
+//fetch posts of a topic
+export const fetchTopicPosts = async (id:string) => {
+    const jwt = localStorage.getItem('medium-token');
+    try {
+        const response = await fetch(`${SERVER}/api/v1/blog/topics/${id}`, {
+            headers: {
+                Authorization: `Bearer ${jwt}`
+            }
+        })
+
+        const data = await response.json();
+
+        console.log(data)
+
+        return data;
+    } catch (error) {
+        console.error('Failed to fetch blogs!')
+    }
+} 
+
+
+//To update user's details
 export const updateProfileDB = async (image: string, bio: string) => {
     try {
         const jwt = localStorage.getItem('medium-token');

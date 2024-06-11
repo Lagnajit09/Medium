@@ -27,7 +27,12 @@ const SearchBar = ({data}: SearchBarType) => {
             leftIcon={<IoSearchOutline/>}
             data={topics}
             callback={(record: any) => console.log(record)}
-            onSelect={(record: any) => navigate(`/topic/${record.item.key}`)}
+            onSelect={(record: any) => navigate(`/topic/${record.item.key}`, {
+                state: {
+                    id: record.item.key,
+                    name: record.item.value
+                }
+            })}
             inputBackgroundColor={`${theme==='dark' ? 'rgb(55 65 81 / 1)' : 'rgb(243 244 246 / 1)'}`}
             inputBorderColor={`${theme==='dark' ? 'rgb(17 24 39 / 1)' : 'rgb(243 244 246 / 1)'}`}
             dropDownHoverColor={'lightgray'}

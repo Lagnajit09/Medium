@@ -17,6 +17,12 @@ interface TopicType {
     label: number;
 }
 
+function stripHtmlTags(text:string) {
+    const div = document.createElement('div');
+    div.innerHTML = text;
+    return div.textContent || div.innerText || '';
+}
+
 const PublishBlog = () => {
     const [options, setOptios] = useState([])
     const [selectedTopic, setSelectedTopic] = useState<TopicType[]>()
@@ -48,7 +54,7 @@ const PublishBlog = () => {
     const content = useMemo(() => {
         return state.data.blocks
             .filter((item: any) => item.type === 'paragraph')
-            .map((item: any) => item.data.text)
+            .map((item: any) => stripHtmlTags(item.data.text))
             .join(' ');
     }, [state]);
 

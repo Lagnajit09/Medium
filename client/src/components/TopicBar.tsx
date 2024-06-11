@@ -16,7 +16,9 @@ const TopicBar = () => {
     /></div>
     {userTopics.map((topic:any, index:number) => 
       <div key={index} className='whitespace-nowrap p-2 text-gray-500 text-sm cursor-pointer hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-100'
-        onClick={() => navigate(`/topic/${topic.id}`)}
+        onClick={() => navigate(`/topic/${topic.id}`, {
+          state: topic
+        })}
       >
         {topic.name}
       </div>

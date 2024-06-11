@@ -17,7 +17,9 @@ export const Recommended = ({topic, loading}: recommendedType) => {
                 </div> 
                 : 
                 <div className=' mx-2 my-1 rounded-full px-4 py-2 flex items-center bg-gray-100 text-black text-sm cursor-pointer dark:bg-gray-700 dark:text-gray-300'
-                    onClick={() => navigate(`/topic/${topic.id}`)}
+                    onClick={() => navigate(`/topic/${topic.id}`, {
+                        state:topic
+                    })}
                 >
                     {topic.name}
                 </div>

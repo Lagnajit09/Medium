@@ -638,6 +638,9 @@ blogRouter.get('/topics/:id', async (c) => {
                 topics: {
                     include: {
                         posts: {
+                            include: {
+                                author: true
+                            },
                             orderBy: {
                                 createdAt: 'desc'
                             }
@@ -656,7 +659,8 @@ blogRouter.get('/topics/:id', async (c) => {
                         name: topic.name,
                         userCount: topic.users.length
                     },
-                    posts: topic.posts
+                    posts: topic.posts,
+                    users: topic.users
                 });
             });
         } else {
@@ -664,6 +668,9 @@ blogRouter.get('/topics/:id', async (c) => {
                 where: { id: Number(id) },
                 include: {
                     posts: {
+                        include: {
+                            author: true
+                        },
                         orderBy: {
                             createdAt: 'desc'
                         }
@@ -680,7 +687,8 @@ blogRouter.get('/topics/:id', async (c) => {
                         userCount: topic.users.length
 
                     },
-                    posts: topic.posts
+                    posts: topic.posts,
+                    users: topic.users
                 });
             }
         }

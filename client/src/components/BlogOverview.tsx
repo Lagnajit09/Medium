@@ -19,11 +19,11 @@ interface overviewType {
     }
 }
 
-function decodeHTMLEntities(text: string) {
-    const element = document.createElement('textarea');
-    element.innerHTML = text;
-    return element.value;
-}
+function stripHtmlTags(text:string) {
+    const div = document.createElement('div');
+    div.innerHTML = text;
+    return div.textContent || div.innerText || '';
+  }
 
 
 const BlogOverview = ({title, content, author, authorImg, topic, createdAt, id}: overviewType) => {
@@ -49,9 +49,10 @@ const BlogOverview = ({title, content, author, authorImg, topic, createdAt, id}:
     const blogContent = useMemo(() => {
         return parsedContent.blocks
             .filter((item: any) => item.type === 'paragraph')
-            .map((item: any) => decodeHTMLEntities(item.data.text))
+            .map((item: any) => stripHtmlTags(item.data.text))
             .join(' ');
     }, [content]);
+
 
     const images = useMemo(() => {
         return parsedContent.blocks.filter((item:any) => item.type === 'image')

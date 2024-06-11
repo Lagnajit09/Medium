@@ -21,7 +21,9 @@ const TopBar = ({topics}:TopBarType) => {
         </div>
         {topics.map((item, index) => (
           <div className="whitespace-nowrap text-gray-800 px-4 py-2 bg-gray-100 rounded-full text-sm hover:text-black cursor-pointer dark:bg-gray-600 dark:text-gray-200" key={index}
-            onClick={()=>navigate(`/topic/${item.id}`)}
+            onClick={()=>navigate(`/topic/${item.id}`, {
+              state: item
+            })}
           >
             {item.name}
           </div>
