@@ -626,32 +626,66 @@ blogRouter.get('/topics/:id', async (c) => {
     const id = c.req.param('id')
 
     try {
-        let posts = Array();
+        let topicsWithPosts = [];
+
         const prisma = new PrismaClient({
-            datasourceUrl: c.env?.DATABASE_URL	,
+            datasourceUrl: c.env?.DATABASE_URL,
         }).$extends(withAccelerate());
 
         const mainTopic = await prisma.mainTopic.findUnique({
             where: { id: Number(id) },
-            include: { topics: { include: { posts: true } } }
-          });
+            include: {
+                topics: {
+                    include: {
+                        posts: {
+                            orderBy: {
+                                createdAt: 'desc'
+                            }
+                        },
+                        users: true
+                    }
+                }
+            }
+        });
 
-        if(mainTopic) {
+        if (mainTopic) {
             mainTopic.topics.forEach(topic => {
-                posts = posts.concat(topic.posts);
-              });
+                topicsWithPosts.push({
+                    topic: {
+                        id: topic.id,
+                        name: topic.name,
+                        userCount: topic.users.length
+                    },
+                    posts: topic.posts
+                });
+            });
         } else {
             const topic = await prisma.topic.findUnique({
                 where: { id: Number(id) },
-                include: { posts: true }
+                include: {
+                    posts: {
+                        orderBy: {
+                            createdAt: 'desc'
+                        }
+                    },
+                    users: true
+                }
             });
-        
-            if(topic) {
-                posts = topic.posts;
+
+            if (topic) {
+                topicsWithPosts.push({
+                    topic: {
+                        id: topic.id,
+                        name: topic.name,
+                        userCount: topic.users.length
+
+                    },
+                    posts: topic.posts
+                });
             }
         }
 
-        return c.json(posts);
+        return c.json(topicsWithPosts);
 
     } catch (error) {
         console.error(error)
