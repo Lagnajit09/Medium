@@ -4,11 +4,12 @@ import { RiFacebookCircleFill } from "react-icons/ri";
 import { RiWhatsappLine } from "react-icons/ri";
 import { HiOutlineLink } from "react-icons/hi";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const ShareBlog = ({copyLink}: {copyLink:string}) => {
+const ShareBlog = ({copyLink, setShowShareOpts}: {copyLink:string, setShowShareOpts:Function}) => {
 
     const [copyText, setCopyText] = useState('Copy Link')
+    const shareOptsRef = useRef<HTMLDivElement>(null);
 
      const copyToClipboard = (): void => {
         navigator.clipboard.writeText(copyLink).then(() => {
@@ -17,10 +18,29 @@ const ShareBlog = ({copyLink}: {copyLink:string}) => {
             console.error('Failed to copy text: ', err);
         });
     };
+
+    const handleClickOutside = (event: MouseEvent) => {
+        if (shareOptsRef.current && !shareOptsRef.current.contains(event.target as Node)) {
+            setShowShareOpts(false);
+        }
+    };
+
+    const handleScroll = () => {
+        setShowShareOpts(false);
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
   
 
   return (
-    <div className=" flex items-center bg-gray-50 rounded-md p-3 dark:bg-gray-700">
+    <div className=" flex items-center bg-gray-50 rounded-md p-3 dark:bg-gray-700 border border-gray-300 shadow-sm" ref={shareOptsRef}>
         <div className=" flex flex-row items-center gap-3 pr-2 border-r">
             <Link target="_blank" to={'https://www.facebook.com/'} className=" flex flex-col items-center gap-2 cursor-pointer">
                 <RiFacebookCircleFill />

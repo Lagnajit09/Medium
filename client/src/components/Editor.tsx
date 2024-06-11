@@ -139,7 +139,7 @@ const Editor = ({data, fetchedTitle, read}:EditorProps) => {
     <div className='w-[90%] md:w-[80%] mx-auto pt-10 overflow-hidden'>
         <textarea 
             placeholder='Title' 
-            className='min-w-[50%] max-w-[90%] md:max-w-[80%] border-b-2 font-bold text-5xl p-1 outline-none text-gray-800 ml-[3%] md:ml-[20%] resize-none scrollbar-hide bg-white dark:bg-gray-800 dark:text-gray-100 dark:border-gray-900' 
+            className='min-w-[60%] max-w-[90%] md:max-w-[80%] border-b-2 font-bold text-5xl p-1 outline-none text-gray-800 ml-[3%] md:ml-[20%] resize-none scrollbar-hide bg-white dark:bg-gray-800 dark:text-gray-100 dark:border-gray-900' 
             onChange={
                 (e) => {
                   setTitle(e.target.value); 

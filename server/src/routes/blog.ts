@@ -334,7 +334,8 @@ blogRouter.get('/post/:id', async (c) => {
             where: {
                 id: Number(id)
             }, include : {
-                topic: true
+                topic: true,
+                author: true
             }
         });
 
@@ -747,7 +748,3 @@ blogRouter.get('/:userId/recommended-topics', async (c) => {
         return c.json({ error: 'Failed to generate recommendations' });
     }
   });
-
-
-
-//firebase storage integration for image

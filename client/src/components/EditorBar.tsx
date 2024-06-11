@@ -11,6 +11,7 @@ import { useState } from "react"
 import { saveUserBlog, updateUserBlog } from "../handlers/userHandlers"
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../ThemeContext"
+import ShareBlog from "./ShareBlog"
 
 interface EditorBarProps {
     update: boolean;
@@ -26,6 +27,7 @@ const EditorBar = ({update, id}: EditorBarProps) => {
     const [buttonTitle, setButtonTitle] = useState(update?'Saved':'Save');
     const navigate = useNavigate()
     const {theme} = useTheme()
+    const [showShareOpts, setShowShareOpts] = useState(false)
 
     const handlePublish = async () => {
         try {
@@ -103,7 +105,7 @@ const EditorBar = ({update, id}: EditorBarProps) => {
             <img src={theme==='dark'?DarkLogo:Logo} alt='logo.svg' className=' w-12 h-12 cursor-pointer' onClick={() => navigate('/home')} />
             <p className=' text-gray-700 dark:text-gray-200'>{(authUser as any).user.name}</p>
         </div>
-        <div className=' flex gap-2 items-center'>
+        <div className=' flex gap-3 md:gap-5 items-center relative'>
 
             <Button title='Publish' onClick={handlePublish} buttonStyles=' bg-green-600 text-white border-2 border-green-600 rounded-full text-sm cursor-pointer hover:bg-white hover:text-green-600' id="publishBtn" />
 
@@ -113,7 +115,7 @@ const EditorBar = ({update, id}: EditorBarProps) => {
                 <Button id="saveBlogButton" title={buttonTitle} onClick={!update? handleSave : handleUpdate} buttonStyles=' bg-white text-gray-600 border-2 border-gray-600 rounded-full text-sm cursor-pointer hover:bg-gray-600 hover:text-white dark:bg-gray-900 dark:text-gray-200 dark:border:white' />
             }
 
-            <LuShare className=' w-5 h-5 cursor-pointer dark:text-gray-100' />
+            <LuShare className=' w-5 h-5 cursor-pointer  dark:text-gray-100' onClick={() => setShowShareOpts(true)} />
 
             <Avatar
                 className='cursor-pointer font-semibold border border-gray-900 dark:text-gray-200'
@@ -122,6 +124,12 @@ const EditorBar = ({update, id}: EditorBarProps) => {
                 src={(authUser as any).user.image ? (authUser as any).user.image : '../broken-img.png'}
             />
         </div>
+
+        {showShareOpts &&
+            <div className=" absolute right-2 top-16">
+                <ShareBlog copyLink="" setShowShareOpts={setShowShareOpts} />
+            </div>
+        }
         
     </div>
   )

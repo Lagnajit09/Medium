@@ -19,6 +19,13 @@ interface overviewType {
     }
 }
 
+function decodeHTMLEntities(text: string) {
+    const element = document.createElement('textarea');
+    element.innerHTML = text;
+    return element.value;
+}
+
+
 const BlogOverview = ({title, content, author, authorImg, topic, createdAt, id}: overviewType) => {
 
     const navigate = useNavigate()
@@ -42,7 +49,7 @@ const BlogOverview = ({title, content, author, authorImg, topic, createdAt, id}:
     const blogContent = useMemo(() => {
         return parsedContent.blocks
             .filter((item: any) => item.type === 'paragraph')
-            .map((item: any) => item.data.text)
+            .map((item: any) => decodeHTMLEntities(item.data.text))
             .join(' ');
     }, [content]);
 

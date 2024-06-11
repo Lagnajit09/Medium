@@ -4,7 +4,7 @@ import { grey } from '@mui/material/colors'
 import { FaRegComment } from "react-icons/fa6";
 import { LuShare } from "react-icons/lu";
 import { FaRegBookmark } from "react-icons/fa6";
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import ShareBlog from './ShareBlog';
 import { CLIENT } from '../config';
 
@@ -44,24 +44,6 @@ const BlogAuthorDetail = ({id, author: {name, image}, createdAt, len}:blogAuthor
         else return `${Math.round(readingTime)} min read`
     }
 
-    const handleClickOutside = (event: MouseEvent) => {
-        if (shareOptsRef.current && !shareOptsRef.current.contains(event.target as Node)) {
-            setShowShareOpts(false);
-        }
-    };
-
-    const handleScroll = () => {
-        setShowShareOpts(false);
-    };
-
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
 
   return (
     <div className='flex flex-col w-[90%] md:w-[48%] mx-auto mt-10 '>
@@ -88,7 +70,7 @@ const BlogAuthorDetail = ({id, author: {name, image}, createdAt, len}:blogAuthor
             </div>
             {showShareOpts && 
                 <div className=" absolute -right-5 md:-right-20 top-12" ref={shareOptsRef}>
-                    <ShareBlog copyLink={`${CLIENT}/blog/${id}`} />
+                    <ShareBlog copyLink={`${CLIENT}/blog/${id}`} setShowShareOpts={setShowShareOpts} />
                 </div>
             }
         </div>
