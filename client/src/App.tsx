@@ -18,12 +18,17 @@ import TopicPosts from './pages/topicPosts'
 import UpdateProfile from './pages/get-started/updateProfile'
 import ReadBlog from './pages/readBlog'
 import { ThemeProvider } from './ThemeContext';
+import { fetchHomeBlogs } from './handlers/userHandlers'
+import { BlogSkeleton } from './components/BlogSkeleton'
+import { Skeleton } from '@mui/material'
+import { blogsAtom } from './store/userAtom'
 
 function App() {
   const  setAuthUser = useSetRecoilState(authUserAtom)
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [loading, setLoading] = useRecoilState(loadingAtom);
+  const setBlogs = useSetRecoilState(blogsAtom);
   const location = useLocation();
   const navigate = useNavigate()
 
@@ -69,6 +74,32 @@ function App() {
 
     isAuthenticated();
   }, []);
+
+  useEffect(() => {
+
+    const fetchBlogs = async () => {
+      try {
+        const fetchedBlogs = await fetchHomeBlogs();
+        setBlogs(fetchedBlogs);
+        setLoading(false)
+      } catch (error) {
+        setLoading(true)
+      }
+    }
+
+    if(localStorage.getItem('medium-userId'))
+      fetchBlogs()
+  }, []);
+
+  if(loading) {
+  return(       
+  <div className=' w-[95%] md:w-[60%] mt-16 pl-6 md:pl-72 mb-10 bg-transparent'>
+    <Skeleton variant='rectangular' className=' rounded-3xl w-full h-1' height={5} />
+    <BlogSkeleton />
+    <BlogSkeleton />
+    <BlogSkeleton />
+  </div>)
+  }
 
   if (loading) {
     return <Loading /> // Display a loading indicator while checking authentication
